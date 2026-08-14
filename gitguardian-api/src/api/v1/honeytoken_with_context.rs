@@ -5,7 +5,7 @@ use serde::Serialize;
 use crate::{
     ApiCall, ApiConfig,
     error::{ApiError, BuildError},
-    models::honeytoken_with_context::HoneytokenWithContext,
+    models::{honeytoken_type::HoneytokenType, honeytoken_with_context::HoneytokenWithContext},
     util::json::{expect_json, json_body},
 };
 
@@ -14,7 +14,7 @@ use crate::{
 struct CreateHoneytokenWithContextBody<'a> {
     name: &'a str,
     #[serde(rename = "type")]
-    honeytoken_type: &'a str,
+    honeytoken_type: HoneytokenType,
     #[serde(skip_serializing_if = "Option::is_none")]
     description: Option<&'a str>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -38,7 +38,7 @@ struct CreateHoneytokenWithContextBody<'a> {
 #[derive(Clone, Debug)]
 pub struct CreateHoneytokenWithContext {
     pub name: String,
-    pub honeytoken_type: String,
+    pub honeytoken_type: HoneytokenType,
     pub description: Option<String>,
     /// Filename to use for the context.
     pub filename: Option<String>,
@@ -48,10 +48,10 @@ pub struct CreateHoneytokenWithContext {
 }
 
 impl CreateHoneytokenWithContext {
-    pub fn new(name: impl Into<String>, honeytoken_type: impl Into<String>) -> Self {
+    pub fn new(name: impl Into<String>, honeytoken_type: HoneytokenType) -> Self {
         Self {
             name: name.into(),
-            honeytoken_type: honeytoken_type.into(),
+            honeytoken_type,
             description: None,
             filename: None,
             language: None,
@@ -69,7 +69,7 @@ impl ApiCall for CreateHoneytokenWithContext {
             config.request(Method::POST, &url),
             &CreateHoneytokenWithContextBody {
                 name: &self.name,
-                honeytoken_type: &self.honeytoken_type,
+                honeytoken_type: self.honeytoken_type,
                 description: self.description.as_deref(),
                 filename: self.filename.as_deref(),
                 language: self.language.as_deref(),

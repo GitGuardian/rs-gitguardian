@@ -5,7 +5,7 @@ use serde::Serialize;
 use crate::{
     ApiCall, ApiConfig,
     error::{ApiError, BuildError},
-    models::honeytoken::Honeytoken,
+    models::{honeytoken::Honeytoken, honeytoken_type::HoneytokenType},
     util::json::{expect_json, json_body},
 };
 
@@ -14,7 +14,7 @@ use crate::{
 struct CreateHoneytokenBody<'a> {
     name: &'a str,
     #[serde(rename = "type")]
-    honeytoken_type: &'a str,
+    honeytoken_type: HoneytokenType,
     #[serde(skip_serializing_if = "Option::is_none")]
     description: Option<&'a str>,
 }
@@ -32,15 +32,15 @@ struct CreateHoneytokenBody<'a> {
 #[derive(Clone, Debug)]
 pub struct CreateHoneytoken {
     pub name: String,
-    pub honeytoken_type: String,
+    pub honeytoken_type: HoneytokenType,
     pub description: Option<String>,
 }
 
 impl CreateHoneytoken {
-    pub fn new(name: impl Into<String>, honeytoken_type: impl Into<String>) -> Self {
+    pub fn new(name: impl Into<String>, honeytoken_type: HoneytokenType) -> Self {
         Self {
             name: name.into(),
-            honeytoken_type: honeytoken_type.into(),
+            honeytoken_type,
             description: None,
         }
     }
@@ -55,7 +55,7 @@ impl ApiCall for CreateHoneytoken {
             config.request(Method::POST, &url),
             &CreateHoneytokenBody {
                 name: &self.name,
-                honeytoken_type: &self.honeytoken_type,
+                honeytoken_type: self.honeytoken_type,
                 description: self.description.as_deref(),
             },
         )

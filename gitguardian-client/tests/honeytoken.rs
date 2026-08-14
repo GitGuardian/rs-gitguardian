@@ -4,6 +4,8 @@ mod common;
 
 use common::assert_api_status;
 use common::fixture::create_honeytoken;
+use gitguardian_api::models::honeytoken_status::HoneytokenStatus;
+use gitguardian_api::models::honeytoken_type::HoneytokenType;
 use gitguardian_mock::MockServer;
 use http::StatusCode;
 
@@ -24,7 +26,8 @@ mod ureq {
             .expect("honeytoken creation should succeed");
 
         assert!(!honeytoken.id.is_nil());
-        assert!(!honeytoken.honeytoken_type.is_empty());
+        assert_eq!(honeytoken.honeytoken_type, HoneytokenType::Aws);
+        assert_eq!(honeytoken.status, HoneytokenStatus::Active);
         assert!(!honeytoken.token.is_empty());
     }
 
@@ -61,7 +64,8 @@ mod reqwest {
             .expect("honeytoken creation should succeed");
 
         assert!(!honeytoken.id.is_nil());
-        assert!(!honeytoken.honeytoken_type.is_empty());
+        assert_eq!(honeytoken.honeytoken_type, HoneytokenType::Aws);
+        assert_eq!(honeytoken.status, HoneytokenStatus::Active);
         assert!(!honeytoken.token.is_empty());
     }
 

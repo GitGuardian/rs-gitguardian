@@ -5,7 +5,7 @@ use serde::Serialize;
 use crate::{
     ApiCall, ApiConfig,
     error::{ApiError, BuildError},
-    models::invitation::Invitation,
+    models::{invitation::Invitation, invitation_access_level::InvitationAccessLevel},
     util::{
         json::{expect_json, json_body},
         url::set_query,
@@ -24,7 +24,7 @@ struct CreateInvitationQueryParam {
 struct CreateInvitationBody<'a> {
     email: &'a str,
     #[serde(skip_serializing_if = "Option::is_none")]
-    access_level: Option<&'a str>,
+    access_level: Option<InvitationAccessLevel>,
 }
 
 /// Create an invitation.
@@ -40,7 +40,7 @@ struct CreateInvitationBody<'a> {
 #[derive(Clone, Debug)]
 pub struct CreateInvitation {
     pub email: String,
-    pub access_level: Option<String>,
+    pub access_level: Option<InvitationAccessLevel>,
     /// Whether to send an email to the invitee with a link to accept the invitation.
     pub send_email: Option<bool>,
 }
@@ -70,7 +70,7 @@ impl ApiCall for CreateInvitation {
             config.request(Method::POST, &url),
             &CreateInvitationBody {
                 email: &self.email,
-                access_level: self.access_level.as_deref(),
+                access_level: self.access_level,
             },
         )
     }

@@ -4,6 +4,7 @@ mod common;
 
 use common::assert_api_status;
 use common::fixture::create_invitation;
+use gitguardian_api::models::access_level::AccessLevel;
 use gitguardian_mock::MockServer;
 use http::StatusCode;
 
@@ -24,7 +25,7 @@ mod ureq {
             .expect("invitation creation should succeed");
 
         assert!(!invitation.email.is_empty());
-        assert!(!invitation.access_level.is_empty());
+        assert_eq!(invitation.access_level, AccessLevel::Manager);
     }
 
     #[test]
@@ -60,7 +61,7 @@ mod reqwest {
             .expect("invitation creation should succeed");
 
         assert!(!invitation.email.is_empty());
-        assert!(!invitation.access_level.is_empty());
+        assert_eq!(invitation.access_level, AccessLevel::Manager);
     }
 
     #[tokio::test]

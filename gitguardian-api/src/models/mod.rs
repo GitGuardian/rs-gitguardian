@@ -1,11 +1,17 @@
+pub mod access_level;
 pub mod custom_tag;
 pub mod document;
 pub mod document_location;
 pub mod honeytoken;
+pub mod honeytoken_status;
+pub mod honeytoken_tag;
+pub mod honeytoken_type;
 pub mod honeytoken_with_context;
 pub mod invitation;
+pub mod invitation_access_level;
 pub mod jwt;
 pub mod r#match;
 pub mod policy_break;
 pub mod scan_result;
 pub mod team;
+pub mod validity;

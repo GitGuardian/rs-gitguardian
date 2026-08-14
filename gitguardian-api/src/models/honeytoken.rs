@@ -5,6 +5,9 @@ use serde::Deserialize;
 use uuid::Uuid;
 
 use crate::models::custom_tag::CustomTag;
+use crate::models::honeytoken_status::HoneytokenStatus;
+use crate::models::honeytoken_tag::HoneytokenTag;
+use crate::models::honeytoken_type::HoneytokenType;
 
 /// Honeytoken of a GitGuardian workspace.
 #[derive(Clone, Debug, Deserialize)]
@@ -15,7 +18,7 @@ pub struct Honeytoken {
     pub description: Option<String>,
     pub created_at: DateTime<Utc>,
     pub gitguardian_url: String,
-    pub status: String,
+    pub status: HoneytokenStatus,
     #[serde(default)]
     pub triggered_at: Option<DateTime<Utc>>,
     #[serde(default)]
@@ -23,7 +26,7 @@ pub struct Honeytoken {
     #[serde(default)]
     pub open_events_count: Option<u32>,
     #[serde(rename = "type")]
-    pub honeytoken_type: String,
+    pub honeytoken_type: HoneytokenType,
     #[serde(default)]
     pub creator_id: Option<u32>,
     #[serde(default)]
@@ -36,7 +39,7 @@ pub struct Honeytoken {
     #[serde(default)]
     pub token: HashMap<String, String>,
     #[serde(default)]
-    pub tags: Vec<String>,
+    pub tags: Vec<HoneytokenTag>,
     /// Custom tags set on the honeytoken.
     #[serde(default)]
     pub custom_tags: Vec<CustomTag>,

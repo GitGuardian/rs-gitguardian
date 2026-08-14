@@ -6,6 +6,22 @@ pub fn patch(spec: &mut Value) {
     patch_project_extensions(spec);
     patch_honeytoken_context_filename(spec);
     patch_scan_create_incidents_result(spec);
+    patch_validity_examples(spec);
+}
+
+fn patch_validity_examples(node: &mut Value) {
+    match node {
+        Value::Object(map) => {
+            if map.get("validity").and_then(Value::as_str) == Some("cannot_check") {
+                map.insert("validity".to_owned(), json!("no_checker"));
+            }
+            for value in map.values_mut() {
+                patch_validity_examples(value);
+            }
+        }
+        Value::Array(values) => values.iter_mut().for_each(patch_validity_examples),
+        _ => {}
+    }
 }
 
 fn patch_project_extensions(spec: &mut Value) {
