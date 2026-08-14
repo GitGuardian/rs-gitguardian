@@ -1,0 +1,25 @@
+[package]
+name = "gitguardian-client"
+version = "0.1.0"
+edition = "2024"
+
+[features]
+default = ["reqwest", "ureq"]
+reqwest = ["dep:reqwest"]
+ureq = ["dep:ureq"]
+
+[dependencies]
+gitguardian-api = { path = "../gitguardian-api" }
+
+bytes = "1"
+http = "1"
+thiserror = "2"
+
+reqwest = { version = "0.12", default-features = false, features = [
+    "rustls-tls",
+], optional = true }
+ureq = { version = "3", optional = true }
+
+[dev-dependencies]
+gitguardian-mock = { path = "../gitguardian-mock" }
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
