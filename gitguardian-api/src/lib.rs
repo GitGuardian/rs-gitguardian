@@ -5,7 +5,9 @@ pub mod models;
 pub(crate) mod util;
 
 pub use bytes;
+pub use chrono;
 pub use http;
+pub use uuid;
 
 use bytes::Bytes;
 use http::header::{AUTHORIZATION, HeaderValue};

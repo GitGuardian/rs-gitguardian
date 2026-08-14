@@ -1,6 +1,8 @@
 pub mod custom_tag;
 pub mod document;
+pub mod document_location;
 pub mod honeytoken;
+pub mod honeytoken_with_context;
 pub mod invitation;
 pub mod jwt;
 pub mod r#match;

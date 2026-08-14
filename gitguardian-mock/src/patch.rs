@@ -3,6 +3,52 @@ use serde_json::{Value, json};
 pub fn patch(spec: &mut Value) {
     patch_security_schemes(spec);
     patch_nullable_enums(spec);
+    patch_project_extensions(spec);
+    patch_honeytoken_context_filename(spec);
+    patch_scan_create_incidents_result(spec);
+}
+
+fn patch_project_extensions(spec: &mut Value) {
+    let Some(schema) = spec.pointer_mut(
+        "/paths/~1v1~1honeytokens~1with-context/post/requestBody/content/application~1json/schema/properties/project_extensions",
+    ) else {
+        return;
+    };
+    *schema = json!({
+        "type": "string",
+        "description": "Comma separated file extensions that can be used for the context.",
+        "example": ".c,.h",
+    });
+}
+
+fn patch_honeytoken_context_filename(spec: &mut Value) {
+    let Some(properties) = spec
+        .pointer_mut(
+            "/paths/~1v1~1honeytokens~1with-context/post/responses/200/content/application~1json/schema/properties",
+        )
+        .and_then(Value::as_object_mut)
+    else {
+        return;
+    };
+    if let Some(filepath) = properties.remove("filepath") {
+        properties.insert("filename".to_owned(), filepath);
+    }
+}
+
+fn patch_scan_create_incidents_result(spec: &mut Value) {
+    let Some(schema) = spec.pointer_mut(
+        "/paths/~1v1~1scan~1create-incidents/post/responses/200/content/application~1json/schema",
+    ) else {
+        return;
+    };
+    if schema.get("type").and_then(Value::as_str) != Some("object") {
+        return;
+    }
+    *schema = json!({
+        "type": "array",
+        "minItems": 1,
+        "items": schema.take(),
+    });
 }
 
 fn patch_security_schemes(spec: &mut Value) {
