@@ -10,11 +10,9 @@ ureq = ["dep:ureq"]
 
 [dependencies]
 gitguardian-api = { path = "../gitguardian-api" }
-
 bytes = "1"
 http = "1"
 thiserror = "2"
-
 reqwest = { version = "0.12", default-features = false, features = [
     "rustls-tls",
 ], optional = true }
