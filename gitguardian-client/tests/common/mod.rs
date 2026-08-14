@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 
+pub mod fixture;
 #[cfg(feature = "reqwest")]
 pub mod reqwest;
 #[cfg(feature = "ureq")]
