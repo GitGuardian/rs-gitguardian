@@ -23,7 +23,7 @@ mod ureq {
             .send(&create_honeytoken())
             .expect("honeytoken creation should succeed");
 
-        assert!(!honeytoken.id.is_empty());
+        assert!(!honeytoken.id.is_nil());
         assert!(!honeytoken.honeytoken_type.is_empty());
         assert!(!honeytoken.token.is_empty());
     }
@@ -60,7 +60,7 @@ mod reqwest {
             .await
             .expect("honeytoken creation should succeed");
 
-        assert!(!honeytoken.id.is_empty());
+        assert!(!honeytoken.id.is_nil());
         assert!(!honeytoken.honeytoken_type.is_empty());
         assert!(!honeytoken.token.is_empty());
     }

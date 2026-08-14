@@ -1,3 +1,4 @@
+use chrono::{DateTime, Utc};
 use serde::Deserialize;
 
 /// Invitation sent to a user of a GitGuardian workspace.
@@ -6,5 +7,5 @@ pub struct Invitation {
     pub id: u32,
     pub email: String,
     pub access_level: String,
-    pub date: String,
+    pub date: DateTime<Utc>,
 }
