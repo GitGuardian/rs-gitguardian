@@ -1,8 +1,13 @@
 use bytes::Bytes;
-use http::{Request, Response, StatusCode, header::CONTENT_TYPE};
+use http::{
+    Request, Response, StatusCode,
+    header::{CONTENT_TYPE, LINK},
+};
 use serde::{Serialize, de::DeserializeOwned};
 
 use crate::error::{ApiError, BuildError};
+use crate::models::page::Page;
+use crate::util::link::{Rel, cursor};
 
 pub fn json_body<T: Serialize>(
     builder: http::request::Builder,
@@ -27,4 +32,24 @@ pub fn expect_json<T: DeserializeOwned>(
     }
     serde_json::from_slice(response.body())
         .map_err(|source| ApiError::Deserialize { status, source })
+}
+
+/// Parses a JSON response returning paginated results
+pub fn expect_json_page<T: DeserializeOwned>(
+    response: Response<Bytes>,
+    expected: StatusCode,
+) -> Result<Page<T>, ApiError> {
+    let link = response
+        .headers()
+        .get_all(LINK)
+        .iter()
+        .filter_map(|value| value.to_str().ok())
+        .collect::<Vec<_>>()
+        .join(",");
+    let items = expect_json(response, expected)?;
+    Ok(Page {
+        items,
+        previous: cursor(&link, Rel::Prev),
+        next: cursor(&link, Rel::Next),
+    })
 }

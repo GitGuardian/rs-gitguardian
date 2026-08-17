@@ -16,6 +16,7 @@ use url::Url;
 
 use crate::constants::DEFAULT_BASE_URI;
 use crate::error::{ApiError, BuildError, ConfigError};
+use crate::models::pagination::Cursor;
 
 pub trait ApiCall {
     type Output;
@@ -23,6 +24,10 @@ pub trait ApiCall {
     fn build(&self, config: &ApiConfig) -> Result<Request<Bytes>, BuildError>;
 
     fn parse(&self, response: Response<Bytes>) -> Result<Self::Output, ApiError>;
+}
+
+pub trait Paginated: ApiCall {
+    fn set_cursor(&mut self, cursor: Cursor);
 }
 
 /// Base URI and API key every call is built against.

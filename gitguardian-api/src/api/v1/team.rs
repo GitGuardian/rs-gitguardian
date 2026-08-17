@@ -3,10 +3,17 @@ use http::{Method, Request, Response, StatusCode};
 use serde::Serialize;
 
 use crate::{
-    ApiCall, ApiConfig,
+    ApiCall, ApiConfig, Paginated,
     error::{ApiError, BuildError},
-    models::team::Team,
-    util::json::{expect_json, json_body},
+    models::{
+        page::Page,
+        pagination::{Cursor, Pagination},
+        team::Team,
+    },
+    util::{
+        json::{expect_json, expect_json_page, json_body},
+        url::set_query,
+    },
 };
 
 /// Body of a team creation request
@@ -59,5 +66,53 @@ impl ApiCall for CreateTeam {
 
     fn parse(&self, response: Response<Bytes>) -> Result<Self::Output, ApiError> {
         expect_json(response, StatusCode::CREATED)
+    }
+}
+
+#[derive(Clone, Debug, Serialize)]
+struct ListTeamsQueryParam<'a> {
+    #[serde(flatten)]
+    page: &'a Pagination,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    is_global: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    search: Option<&'a str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    linked_to_an_external_provider: Option<bool>,
+}
+
+#[derive(Clone, Debug, Default)]
+pub struct ListTeams {
+    pub page: Pagination,
+    pub is_global: Option<bool>,
+    pub search: Option<String>,
+    pub linked_to_an_external_provider: Option<bool>,
+}
+
+impl ApiCall for ListTeams {
+    type Output = Page<Team>;
+
+    fn build(&self, config: &ApiConfig) -> Result<Request<Bytes>, BuildError> {
+        let mut url = config.endpoint("teams")?;
+        set_query(
+            &mut url,
+            &ListTeamsQueryParam {
+                page: &self.page,
+                is_global: self.is_global,
+                search: self.search.as_deref(),
+                linked_to_an_external_provider: self.linked_to_an_external_provider,
+            },
+        )?;
+        Ok(config.request(Method::GET, &url).body(Bytes::new())?)
+    }
+
+    fn parse(&self, response: Response<Bytes>) -> Result<Self::Output, ApiError> {
+        expect_json_page(response, StatusCode::OK)
+    }
+}
+
+impl Paginated for ListTeams {
+    fn set_cursor(&mut self, cursor: Cursor) {
+        self.page.cursor = Some(cursor);
     }
 }

@@ -227,6 +227,7 @@ name = "gitguardian-client"
 version = "0.1.0"
 dependencies = [
  "bytes",
+ "futures-core",
  "gitguardian-api",
  "gitguardian-mock",
  "http",

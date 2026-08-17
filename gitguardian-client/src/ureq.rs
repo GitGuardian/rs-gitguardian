@@ -1,5 +1,5 @@
 use bytes::Bytes;
-use gitguardian_api::{ApiCall, ApiConfig};
+use gitguardian_api::{ApiCall, ApiConfig, Paginated, models::page::Page};
 use http::Response;
 
 use crate::error::Error;
@@ -33,6 +33,42 @@ impl Client {
         let bytes = body.with_config().limit(BODY_LIMIT).read_to_vec()?;
 
         Ok(call.parse(Response::from_parts(parts, Bytes::from(bytes)))?)
+    }
+
+    pub fn paginate<T, C>(&self, call: C) -> Pages<'_, C>
+    where
+        C: Paginated<Output = Page<T>>,
+    {
+        Pages {
+            client: self,
+            call: Some(call),
+        }
+    }
+}
+
+pub struct Pages<'a, C> {
+    client: &'a Client,
+    call: Option<C>,
+}
+
+impl<T, C> Iterator for Pages<'_, C>
+where
+    C: Paginated<Output = Page<T>>,
+{
+    type Item = Result<Page<T>, Error>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let mut call = self.call.take()?;
+        match self.client.send(&call) {
+            Ok(page) => {
+                if let Some(cursor) = page.next.clone() {
+                    call.set_cursor(cursor);
+                    self.call = Some(call);
+                }
+                Some(Ok(page))
+            }
+            Err(error) => Some(Err(error)),
+        }
     }
 }
 

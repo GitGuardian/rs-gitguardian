@@ -6,6 +6,8 @@ pub mod invitation;
 pub mod invitation_access_level;
 pub mod jwt;
 pub mod r#match;
+pub mod page;
+pub mod pagination;
 pub mod policy_break;
 pub mod scan_result;
 pub mod team;

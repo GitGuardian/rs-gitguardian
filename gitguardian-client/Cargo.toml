@@ -5,12 +5,13 @@ edition = "2024"
 
 [features]
 default = ["ureq"]
-reqwest = ["dep:reqwest"]
+reqwest = ["dep:reqwest", "dep:futures-core"]
 ureq = ["dep:ureq"]
 
 [dependencies]
 gitguardian-api = { path = "../gitguardian-api" }
 bytes = "1"
+futures-core = { version = "0.3", optional = true }
 http = "1"
 thiserror = "2"
 reqwest = { version = "0.12", default-features = false, features = [
