@@ -3,7 +3,7 @@
 mod common;
 
 use common::assert_api_status;
-use common::fixture::update_team_sources;
+use common::fixture::{list_team_sources, update_team_sources};
 use gitguardian_mock::MockServer;
 use http::StatusCode;
 
@@ -34,6 +34,19 @@ mod ureq {
             .unwrap_err();
 
         assert_api_status(&error, StatusCode::UNAUTHORIZED, "Invalid API key.");
+    }
+
+    #[test]
+    /// GIVEN a team id and filter parameters
+    /// WHEN listing the sources of the team perimeter
+    /// THEN a page of sources is returned
+    fn lists_team_sources() {
+        let page = client(MockServer::shared())
+            .send(&list_team_sources())
+            .expect("team source listing should succeed");
+
+        assert!(!page.items.is_empty());
+        assert!(page.items.iter().all(|source| !source.full_name.is_empty()));
     }
 }
 
@@ -66,5 +79,19 @@ mod reqwest {
             .unwrap_err();
 
         assert_api_status(&error, StatusCode::UNAUTHORIZED, "Invalid API key.");
+    }
+
+    #[tokio::test]
+    /// GIVEN a team id and filter parameters
+    /// WHEN listing the sources of the team perimeter
+    /// THEN a page of sources is returned
+    async fn lists_team_sources() {
+        let page = client(MockServer::shared())
+            .send(&list_team_sources())
+            .await
+            .expect("team source listing should succeed");
+
+        assert!(!page.items.is_empty());
+        assert!(page.items.iter().all(|source| !source.full_name.is_empty()));
     }
 }

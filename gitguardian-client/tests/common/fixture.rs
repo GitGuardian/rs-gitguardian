@@ -14,7 +14,7 @@ use gitguardian_api::api::v1::source::ListSources;
 use gitguardian_api::api::v1::team::{CreateTeam, ListTeams, RetrieveTeam};
 use gitguardian_api::api::v1::team_invitation::{CreateTeamInvitation, ListTeamInvitations};
 use gitguardian_api::api::v1::team_membership::{CreateTeamMembership, ListTeamMemberships};
-use gitguardian_api::api::v1::team_source::UpdateTeamSources;
+use gitguardian_api::api::v1::team_source::{ListTeamSources, UpdateTeamSources};
 use gitguardian_api::models::document::Document;
 use gitguardian_api::models::document_location::DocumentLocation;
 use gitguardian_api::models::honeytoken::r#type::HoneytokenType;
@@ -196,4 +196,11 @@ pub fn list_sources() -> ListSources {
         ordering: Some(SourceOrdering::LastScanDateDesc),
         ..Default::default()
     }
+}
+
+pub fn list_team_sources() -> ListTeamSources {
+    let mut call = ListTeamSources::new(TEAM_ID);
+    call.page.per_page = Some(1);
+    call.health = Some(SourceHealth::Safe);
+    call
 }
