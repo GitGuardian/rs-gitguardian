@@ -3,7 +3,7 @@
 mod common;
 
 use common::assert_api_status;
-use common::fixture::list_team_invitations;
+use common::fixture::{create_team_invitation, list_team_invitations};
 use gitguardian_mock::MockServer;
 use http::StatusCode;
 
@@ -61,6 +61,21 @@ mod ureq {
             .unwrap_err();
 
         assert_api_status(&error, StatusCode::UNAUTHORIZED, "Invalid API key.");
+    }
+
+    #[test]
+    /// GIVEN a team id and an invitation id
+    /// WHEN creating the team invitation
+    /// THEN the created team invitation is returned
+    fn creates_team_invitation() {
+        let server = MockServer::shared();
+
+        let invitation = client(server)
+            .send(&create_team_invitation())
+            .expect("team invitation creation should succeed");
+
+        assert!(invitation.id > 0);
+        assert!(invitation.invitation_id > 0);
     }
 }
 
@@ -122,5 +137,21 @@ mod reqwest {
             .unwrap_err();
 
         assert_api_status(&error, StatusCode::UNAUTHORIZED, "Invalid API key.");
+    }
+
+    #[tokio::test]
+    /// GIVEN a team id and an invitation id
+    /// WHEN creating the team invitation
+    /// THEN the created team invitation is returned
+    async fn creates_team_invitation() {
+        let server = MockServer::shared();
+
+        let invitation = client(server)
+            .send(&create_team_invitation())
+            .await
+            .expect("team invitation creation should succeed");
+
+        assert!(invitation.id > 0);
+        assert!(invitation.invitation_id > 0);
     }
 }

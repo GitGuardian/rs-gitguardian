@@ -8,8 +8,9 @@ use gitguardian_api::api::v1::multiscan::MultiScan;
 use gitguardian_api::api::v1::scan::Scan;
 use gitguardian_api::api::v1::scan_create_incidents::ScanCreateIncidents;
 use gitguardian_api::api::v1::team::{CreateTeam, ListTeams, RetrieveTeam};
-use gitguardian_api::api::v1::team_invitation::ListTeamInvitations;
-use gitguardian_api::api::v1::team_membership::ListTeamMemberships;
+use gitguardian_api::api::v1::team_invitation::{CreateTeamInvitation, ListTeamInvitations};
+use gitguardian_api::api::v1::team_membership::{CreateTeamMembership, ListTeamMemberships};
+use gitguardian_api::api::v1::team_source::UpdateTeamSources;
 use gitguardian_api::models::document::Document;
 use gitguardian_api::models::document_location::DocumentLocation;
 use gitguardian_api::models::honeytoken::r#type::HoneytokenType;
@@ -26,6 +27,10 @@ pub const SOURCE_UUID: Uuid = Uuid::from_u128(0x550e8400_e29b_41d4_a716_44665544
 pub const TEAM_ID: u32 = 3252;
 
 pub const MEMBER_ID: u32 = 3252;
+
+pub const INVITATION_ID: u32 = 4851;
+
+pub const SOURCE_ID: u32 = 6531;
 
 pub fn document() -> Document {
     Document::new("aws_key = AKIA123").with_filename("intro.py")
@@ -133,4 +138,25 @@ pub fn list_team_memberships() -> ListTeamMemberships {
 
 pub fn create_invitation() -> CreateInvitation {
     CreateInvitation::new("someone@example.com")
+}
+
+pub fn create_team_invitation() -> CreateTeamInvitation {
+    let mut call = CreateTeamInvitation::new(TEAM_ID, INVITATION_ID);
+    call.is_team_leader = Some(false);
+    call.incident_permission = Some(IncidentPermission::CanEdit);
+    call
+}
+
+pub fn create_team_membership() -> CreateTeamMembership {
+    let mut call = CreateTeamMembership::new(TEAM_ID, MEMBER_ID);
+    call.is_team_leader = Some(false);
+    call.incident_permission = Some(IncidentPermission::CanEdit);
+    call.send_email = Some(false);
+    call
+}
+
+pub fn update_team_sources() -> UpdateTeamSources {
+    let mut call = UpdateTeamSources::new(TEAM_ID);
+    call.sources_to_add = vec![SOURCE_ID];
+    call
 }

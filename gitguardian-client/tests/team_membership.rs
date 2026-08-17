@@ -3,7 +3,7 @@
 mod common;
 
 use common::assert_api_status;
-use common::fixture::list_team_memberships;
+use common::fixture::{create_team_membership, list_team_memberships};
 use gitguardian_mock::MockServer;
 use http::StatusCode;
 
@@ -57,6 +57,21 @@ mod ureq {
             .unwrap_err();
 
         assert_api_status(&error, StatusCode::UNAUTHORIZED, "Invalid API key.");
+    }
+
+    #[test]
+    /// GIVEN a team id and a member id
+    /// WHEN adding the member to the team
+    /// THEN the created team membership is returned
+    fn creates_team_membership() {
+        let server = MockServer::shared();
+
+        let membership = client(server)
+            .send(&create_team_membership())
+            .expect("team membership creation should succeed");
+
+        assert!(membership.id > 0);
+        assert!(membership.member_id > 0);
     }
 }
 
@@ -114,5 +129,21 @@ mod reqwest {
             .unwrap_err();
 
         assert_api_status(&error, StatusCode::UNAUTHORIZED, "Invalid API key.");
+    }
+
+    #[tokio::test]
+    /// GIVEN a team id and a member id
+    /// WHEN adding the member to the team
+    /// THEN the created team membership is returned
+    async fn creates_team_membership() {
+        let server = MockServer::shared();
+
+        let membership = client(server)
+            .send(&create_team_membership())
+            .await
+            .expect("team membership creation should succeed");
+
+        assert!(membership.id > 0);
+        assert!(membership.member_id > 0);
     }
 }

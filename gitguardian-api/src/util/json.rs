@@ -19,19 +19,31 @@ pub fn json_body<T: Serialize>(
         .body(Bytes::from(body))?)
 }
 
+fn expect_status(response: &Response<Bytes>, expected: StatusCode) -> Result<(), ApiError> {
+    let status = response.status();
+    if status == expected {
+        return Ok(());
+    }
+    Err(ApiError::Status {
+        status,
+        detail: String::from_utf8_lossy(response.body()).trim().to_owned(),
+    })
+}
+
 pub fn expect_json<T: DeserializeOwned>(
     response: Response<Bytes>,
     expected: StatusCode,
 ) -> Result<T, ApiError> {
-    let status = response.status();
-    if status != expected {
-        return Err(ApiError::Status {
-            status,
-            detail: String::from_utf8_lossy(response.body()).trim().to_owned(),
-        });
-    }
-    serde_json::from_slice(response.body())
-        .map_err(|source| ApiError::Deserialize { status, source })
+    expect_status(&response, expected)?;
+    serde_json::from_slice(response.body()).map_err(|source| ApiError::Deserialize {
+        status: response.status(),
+        source,
+    })
+}
+
+/// Parses a response that carries no content
+pub fn expect_no_content(response: Response<Bytes>, expected: StatusCode) -> Result<(), ApiError> {
+    expect_status(&response, expected)
 }
 
 /// Parses a JSON response returning paginated results
