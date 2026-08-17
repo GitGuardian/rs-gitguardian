@@ -3,7 +3,7 @@
 mod common;
 
 use common::assert_api_status;
-use common::fixture::create_team;
+use common::fixture::{create_team, list_teams};
 use gitguardian_mock::MockServer;
 use http::StatusCode;
 
@@ -40,12 +40,79 @@ mod ureq {
 
         assert_api_status(&error, StatusCode::UNAUTHORIZED, "Invalid API key.");
     }
+
+    #[test]
+    /// GIVEN pagination and filter parameters
+    /// WHEN listing teams
+    /// THEN a page of teams is returned
+    fn lists_teams() {
+        let server = MockServer::shared();
+
+        let page = client(server)
+            .send(&list_teams())
+            .expect("team listing should succeed");
+
+        assert!(!page.items.is_empty());
+        assert!(page.items.iter().all(|team| !team.name.is_empty()));
+    }
+
+    #[test]
+    /// GIVEN a listing whose response carries a Link header
+    /// WHEN reading the page
+    /// THEN the cursors are parsed out of the header
+    fn reads_cursors_from_link_header() {
+        let server = MockServer::shared();
+
+        let page = client(server)
+            .send(&list_teams())
+            .expect("team listing should succeed");
+
+        assert!(page.next.is_some());
+        assert!(page.previous.is_some());
+    }
+
+    #[test]
+    /// GIVEN a mock that always reports a next cursor
+    /// WHEN taking two pages from the paginated call
+    /// THEN both pages are fetched
+    fn paginates_teams() {
+        let server = MockServer::shared();
+        let client = client(server);
+
+        let pages = client
+            .paginate(list_teams())
+            .take(2)
+            .collect::<Result<Vec<_>, _>>()
+            .expect("team pagination should succeed");
+
+        assert_eq!(pages.len(), 2);
+        assert!(pages.iter().all(|page| !page.items.is_empty()));
+    }
+
+    #[test]
+    /// GIVEN a server that rejects the api key
+    /// WHEN iterating the paginated call
+    /// THEN the error is yielded once and iteration stops
+    fn stops_paginating_after_error() {
+        let server = MockServer::shared();
+        let client = client_preferring(server, 401);
+        let mut pages = client.paginate(list_teams());
+
+        let error = pages
+            .next()
+            .expect("the failing page should be yielded")
+            .unwrap_err();
+
+        assert_api_status(&error, StatusCode::UNAUTHORIZED, "Invalid API key.");
+        assert!(pages.next().is_none());
+    }
 }
 
 #[cfg(feature = "reqwest")]
 mod reqwest {
     use super::*;
     use common::reqwest::{client, client_preferring};
+    use futures_util::{StreamExt, TryStreamExt};
 
     #[tokio::test]
     /// GIVEN a team name
@@ -76,5 +143,75 @@ mod reqwest {
             .unwrap_err();
 
         assert_api_status(&error, StatusCode::UNAUTHORIZED, "Invalid API key.");
+    }
+
+    #[tokio::test]
+    /// GIVEN pagination and filter parameters
+    /// WHEN listing teams
+    /// THEN a page of teams is returned
+    async fn lists_teams() {
+        let server = MockServer::shared();
+
+        let page = client(server)
+            .send(&list_teams())
+            .await
+            .expect("team listing should succeed");
+
+        assert!(!page.items.is_empty());
+        assert!(page.items.iter().all(|team| !team.name.is_empty()));
+    }
+
+    #[tokio::test]
+    /// GIVEN a listing whose response carries a Link header
+    /// WHEN reading the page
+    /// THEN the cursors are parsed out of the header
+    async fn reads_cursors_from_link_header() {
+        let server = MockServer::shared();
+
+        let page = client(server)
+            .send(&list_teams())
+            .await
+            .expect("team listing should succeed");
+
+        assert!(page.next.is_some());
+        assert!(page.previous.is_some());
+    }
+
+    #[tokio::test]
+    /// GIVEN a mock that always reports a next cursor
+    /// WHEN taking two pages from the paginated call
+    /// THEN both pages are fetched
+    async fn paginates_teams() {
+        let server = MockServer::shared();
+        let client = client(server);
+
+        let pages: Vec<_> = client
+            .paginate(list_teams())
+            .take(2)
+            .try_collect()
+            .await
+            .expect("team pagination should succeed");
+
+        assert_eq!(pages.len(), 2);
+        assert!(pages.iter().all(|page| !page.items.is_empty()));
+    }
+
+    #[tokio::test]
+    /// GIVEN a server that rejects the api key
+    /// WHEN iterating the paginated call
+    /// THEN the error is yielded once and iteration stops
+    async fn stops_paginating_after_error() {
+        let server = MockServer::shared();
+        let client = client_preferring(server, 401);
+        let mut pages = client.paginate(list_teams());
+
+        let error = pages
+            .next()
+            .await
+            .expect("the failing page should be yielded")
+            .unwrap_err();
+
+        assert_api_status(&error, StatusCode::UNAUTHORIZED, "Invalid API key.");
+        assert!(pages.next().await.is_none());
     }
 }

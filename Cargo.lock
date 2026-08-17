@@ -228,6 +228,7 @@ version = "0.1.0"
 dependencies = [
  "bytes",
  "futures-core",
+ "futures-util",
  "gitguardian-api",
  "gitguardian-mock",
  "http",

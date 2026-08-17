@@ -5,10 +5,11 @@ use gitguardian_api::api::v1::jwt::CreateJwt;
 use gitguardian_api::api::v1::multiscan::MultiScan;
 use gitguardian_api::api::v1::scan::Scan;
 use gitguardian_api::api::v1::scan_create_incidents::ScanCreateIncidents;
-use gitguardian_api::api::v1::team::CreateTeam;
+use gitguardian_api::api::v1::team::{CreateTeam, ListTeams};
 use gitguardian_api::models::document::Document;
 use gitguardian_api::models::document_location::DocumentLocation;
 use gitguardian_api::models::honeytoken::r#type::HoneytokenType;
+use gitguardian_api::models::pagination::Pagination;
 use gitguardian_api::uuid::Uuid;
 
 pub const SOURCE_UUID: Uuid = Uuid::from_u128(0x550e8400_e29b_41d4_a716_446655440000);
@@ -58,6 +59,17 @@ pub fn create_honeytoken() -> CreateHoneytoken {
 
 pub fn create_team() -> CreateTeam {
     CreateTeam::new("feature team A")
+}
+
+pub fn list_teams() -> ListTeams {
+    ListTeams {
+        page: Pagination {
+            per_page: Some(1),
+            ..Default::default()
+        },
+        is_global: Some(false),
+        ..Default::default()
+    }
 }
 
 pub fn create_invitation() -> CreateInvitation {
