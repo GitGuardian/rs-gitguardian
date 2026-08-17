@@ -5,7 +5,7 @@ use serde::Serialize;
 use crate::{
     ApiCall, ApiConfig,
     error::{ApiError, BuildError},
-    models::{honeytoken_type::HoneytokenType, honeytoken_with_context::HoneytokenWithContext},
+    models::honeytoken::{HoneytokenWithContext, r#type::HoneytokenType},
     util::json::{expect_json, json_body},
 };
 

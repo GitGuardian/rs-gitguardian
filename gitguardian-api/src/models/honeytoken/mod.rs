@@ -4,10 +4,14 @@ use chrono::{DateTime, Utc};
 use serde::Deserialize;
 use uuid::Uuid;
 
-use crate::models::custom_tag::CustomTag;
-use crate::models::honeytoken_status::HoneytokenStatus;
-use crate::models::honeytoken_tag::HoneytokenTag;
-use crate::models::honeytoken_type::HoneytokenType;
+use crate::models::honeytoken::{
+    custom_tag::CustomTag, status::HoneytokenStatus, tag::HoneytokenTag, r#type::HoneytokenType,
+};
+
+pub mod custom_tag;
+pub mod status;
+pub mod tag;
+pub mod r#type;
 
 /// Honeytoken of a GitGuardian workspace.
 #[derive(Clone, Debug, Deserialize)]
@@ -43,4 +47,16 @@ pub struct Honeytoken {
     /// Custom tags set on the honeytoken.
     #[serde(default)]
     pub custom_tags: Vec<CustomTag>,
+}
+
+/// Honeytoken inserted into a realistic file.
+#[derive(Clone, Debug, Deserialize)]
+pub struct HoneytokenWithContext {
+    pub content: String,
+    pub filename: String,
+    pub language: String,
+    pub suggested_commit_message: String,
+    pub honeytoken_id: Uuid,
+    /// URL of the honeytoken on the dashboard.
+    pub gitguardian_url: String,
 }

@@ -8,7 +8,7 @@ use gitguardian_api::api::v1::scan_create_incidents::ScanCreateIncidents;
 use gitguardian_api::api::v1::team::CreateTeam;
 use gitguardian_api::models::document::Document;
 use gitguardian_api::models::document_location::DocumentLocation;
-use gitguardian_api::models::honeytoken_type::HoneytokenType;
+use gitguardian_api::models::honeytoken::r#type::HoneytokenType;
 use gitguardian_api::uuid::Uuid;
 
 pub const SOURCE_UUID: Uuid = Uuid::from_u128(0x550e8400_e29b_41d4_a716_446655440000);

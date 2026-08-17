@@ -4,8 +4,7 @@ mod common;
 
 use common::assert_api_status;
 use common::fixture::create_honeytoken;
-use gitguardian_api::models::honeytoken_status::HoneytokenStatus;
-use gitguardian_api::models::honeytoken_type::HoneytokenType;
+use gitguardian_api::models::honeytoken::{status::HoneytokenStatus, r#type::HoneytokenType};
 use gitguardian_mock::MockServer;
 use http::StatusCode;
 
