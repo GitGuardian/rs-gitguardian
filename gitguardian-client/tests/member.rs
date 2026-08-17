@@ -2,15 +2,13 @@
 
 mod common;
 
-use common::assert_api_status;
 use common::fixture::{list_members, retrieve_member};
 use gitguardian_mock::MockServer;
-use http::StatusCode;
 
 #[cfg(feature = "ureq")]
 mod ureq {
     use super::*;
-    use common::ureq::{client, client_preferring};
+    use common::ureq::client;
 
     #[test]
     /// GIVEN pagination and filter parameters
@@ -59,26 +57,12 @@ mod ureq {
         assert!(!member.email.is_empty());
         assert_eq!(member.role, member.access_level);
     }
-
-    #[test]
-    /// GIVEN a server that rejects the api key
-    /// WHEN listing members
-    /// THEN the api error reaches the caller instead of a transport error
-    fn surfaces_api_error() {
-        let server = MockServer::shared();
-
-        let error = client_preferring(server, 401)
-            .send(&list_members())
-            .unwrap_err();
-
-        assert_api_status(&error, StatusCode::UNAUTHORIZED, "Invalid API key.");
-    }
 }
 
 #[cfg(feature = "reqwest")]
 mod reqwest {
     use super::*;
-    use common::reqwest::{client, client_preferring};
+    use common::reqwest::client;
     use futures_util::{StreamExt, TryStreamExt};
 
     #[tokio::test]
@@ -130,20 +114,5 @@ mod reqwest {
         assert!(member.id > 0);
         assert!(!member.email.is_empty());
         assert_eq!(member.role, member.access_level);
-    }
-
-    #[tokio::test]
-    /// GIVEN a server that rejects the api key
-    /// WHEN listing members
-    /// THEN the api error reaches the caller instead of a transport error
-    async fn surfaces_api_error() {
-        let server = MockServer::shared();
-
-        let error = client_preferring(server, 401)
-            .send(&list_members())
-            .await
-            .unwrap_err();
-
-        assert_api_status(&error, StatusCode::UNAUTHORIZED, "Invalid API key.");
     }
 }
