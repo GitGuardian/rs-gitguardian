@@ -3,8 +3,8 @@
 mod common;
 
 use common::assert_api_status;
-use common::fixture::create_invitation;
-use gitguardian_api::models::access_level::AccessLevel;
+use common::fixture::{create_invitation, list_invitations};
+use gitguardian_api::models::invitation::access_level::InvitationAccessLevel;
 use gitguardian_mock::MockServer;
 use http::StatusCode;
 
@@ -25,7 +25,7 @@ mod ureq {
             .expect("invitation creation should succeed");
 
         assert!(!invitation.email.is_empty());
-        assert_eq!(invitation.access_level, AccessLevel::Manager);
+        assert_eq!(invitation.access_level, InvitationAccessLevel::Manager);
     }
 
     #[test]
@@ -40,6 +40,25 @@ mod ureq {
             .unwrap_err();
 
         assert_api_status(&error, StatusCode::UNAUTHORIZED, "Invalid API key.");
+    }
+
+    #[test]
+    /// GIVEN pagination and ordering parameters
+    /// WHEN listing invitations
+    /// THEN a page of invitations is returned
+    fn lists_invitations() {
+        let server = MockServer::shared();
+
+        let page = client(server)
+            .send(&list_invitations())
+            .expect("invitation listing should succeed");
+
+        assert!(!page.items.is_empty());
+        assert!(
+            page.items
+                .iter()
+                .all(|invitation| !invitation.email.is_empty())
+        );
     }
 }
 
@@ -61,7 +80,7 @@ mod reqwest {
             .expect("invitation creation should succeed");
 
         assert!(!invitation.email.is_empty());
-        assert_eq!(invitation.access_level, AccessLevel::Manager);
+        assert_eq!(invitation.access_level, InvitationAccessLevel::Manager);
     }
 
     #[tokio::test]
@@ -77,5 +96,25 @@ mod reqwest {
             .unwrap_err();
 
         assert_api_status(&error, StatusCode::UNAUTHORIZED, "Invalid API key.");
+    }
+
+    #[tokio::test]
+    /// GIVEN pagination and ordering parameters
+    /// WHEN listing invitations
+    /// THEN a page of invitations is returned
+    async fn lists_invitations() {
+        let server = MockServer::shared();
+
+        let page = client(server)
+            .send(&list_invitations())
+            .await
+            .expect("invitation listing should succeed");
+
+        assert!(!page.items.is_empty());
+        assert!(
+            page.items
+                .iter()
+                .all(|invitation| !invitation.email.is_empty())
+        );
     }
 }

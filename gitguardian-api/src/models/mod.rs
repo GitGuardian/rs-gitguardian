@@ -1,11 +1,10 @@
-pub mod access_level;
 pub mod document;
 pub mod document_location;
 pub mod honeytoken;
 pub mod invitation;
-pub mod invitation_access_level;
 pub mod jwt;
 pub mod r#match;
+pub mod member;
 pub mod page;
 pub mod pagination;
 pub mod policy_break;

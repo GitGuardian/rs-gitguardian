@@ -3,7 +3,7 @@
 mod common;
 
 use common::assert_api_status;
-use common::fixture::{create_team, list_teams};
+use common::fixture::{create_team, list_teams, retrieve_team};
 use gitguardian_mock::MockServer;
 use http::StatusCode;
 
@@ -105,6 +105,21 @@ mod ureq {
 
         assert_api_status(&error, StatusCode::UNAUTHORIZED, "Invalid API key.");
         assert!(pages.next().is_none());
+    }
+
+    #[test]
+    /// GIVEN a team id
+    /// WHEN retrieving that team
+    /// THEN the team is returned
+    fn retrieves_team() {
+        let server = MockServer::shared();
+
+        let team = client(server)
+            .send(&retrieve_team())
+            .expect("team retrieval should succeed");
+
+        assert!(!team.name.is_empty());
+        assert!(!team.gitguardian_url.is_empty());
     }
 }
 
@@ -213,5 +228,21 @@ mod reqwest {
 
         assert_api_status(&error, StatusCode::UNAUTHORIZED, "Invalid API key.");
         assert!(pages.next().await.is_none());
+    }
+
+    #[tokio::test]
+    /// GIVEN a team id
+    /// WHEN retrieving that team
+    /// THEN the team is returned
+    async fn retrieves_team() {
+        let server = MockServer::shared();
+
+        let team = client(server)
+            .send(&retrieve_team())
+            .await
+            .expect("team retrieval should succeed");
+
+        assert!(!team.name.is_empty());
+        assert!(!team.gitguardian_url.is_empty());
     }
 }

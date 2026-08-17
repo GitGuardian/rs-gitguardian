@@ -3,11 +3,17 @@ use http::{Method, Request, Response, StatusCode};
 use serde::Serialize;
 
 use crate::{
-    ApiCall, ApiConfig,
+    ApiCall, ApiConfig, Paginated,
     error::{ApiError, BuildError},
-    models::{invitation::Invitation, invitation_access_level::InvitationAccessLevel},
+    models::{
+        invitation::{
+            Invitation, access_level::InvitationAccessLevel, ordering::InvitationOrdering,
+        },
+        page::Page,
+        pagination::{Cursor, Pagination},
+    },
     util::{
-        json::{expect_json, json_body},
+        json::{expect_json, expect_json_page, json_body},
         url::set_query,
     },
 };
@@ -77,5 +83,67 @@ impl ApiCall for CreateInvitation {
 
     fn parse(&self, response: Response<Bytes>) -> Result<Self::Output, ApiError> {
         expect_json(response, StatusCode::CREATED)
+    }
+}
+
+/// Query parameters of an invitation listing request
+#[derive(Clone, Debug, Serialize)]
+struct ListInvitationsQueryParam<'a> {
+    #[serde(flatten)]
+    page: &'a Pagination,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    search: Option<&'a str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    ordering: Option<InvitationOrdering>,
+}
+
+/// List invitations.
+///
+/// This endpoint allows you to list all pending invitations.
+///
+/// The response contains the list of invitations and a pagination cursor to retrieve the
+/// next page.
+///
+/// The invitations are sorted by id.
+///
+/// If you are using a personal access token, you need to have an access level superior or
+/// equal to `member`.
+///
+/// `GET /v1/invitations`, answering `200` List invitations, `400` Invalid data, `401`
+/// Invalid API key, `403` Forbidden Call or `503` API under maintenance.
+#[derive(Clone, Debug, Default)]
+pub struct ListInvitations {
+    pub page: Pagination,
+    /// Search invitations based on the email field.
+    pub search: Option<String>,
+    /// Sort the results by their field value. The default sort is ASC, DESC if the field
+    /// is preceded by a `-`.
+    pub ordering: Option<InvitationOrdering>,
+}
+
+impl ApiCall for ListInvitations {
+    type Output = Page<Invitation>;
+
+    fn build(&self, config: &ApiConfig) -> Result<Request<Bytes>, BuildError> {
+        let mut url = config.endpoint("invitations")?;
+        set_query(
+            &mut url,
+            &ListInvitationsQueryParam {
+                page: &self.page,
+                search: self.search.as_deref(),
+                ordering: self.ordering,
+            },
+        )?;
+        Ok(config.request(Method::GET, &url).body(Bytes::new())?)
+    }
+
+    fn parse(&self, response: Response<Bytes>) -> Result<Self::Output, ApiError> {
+        expect_json_page(response, StatusCode::OK)
+    }
+}
+
+impl Paginated for ListInvitations {
+    fn set_cursor(&mut self, cursor: Cursor) {
+        self.page.cursor = Some(cursor);
     }
 }

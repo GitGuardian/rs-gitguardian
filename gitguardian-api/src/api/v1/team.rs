@@ -116,3 +116,38 @@ impl Paginated for ListTeams {
         self.page.cursor = Some(cursor);
     }
 }
+
+/// Retrieve a team.
+///
+/// Retrieve an existing team.
+///
+/// If you are using a personal access token, you need to have an access level greater or
+/// equal to `member`.
+///
+/// `GET /v1/teams/{team_id}`, answering `200` Team details, `400` Invalid data, `401`
+/// Invalid API key, `403` Forbidden Call, `404` Team not found or `503` API under
+/// maintenance.
+#[derive(Clone, Debug)]
+pub struct RetrieveTeam {
+    /// The id of the team.
+    pub team_id: u32,
+}
+
+impl RetrieveTeam {
+    pub fn new(team_id: u32) -> Self {
+        Self { team_id }
+    }
+}
+
+impl ApiCall for RetrieveTeam {
+    type Output = Team;
+
+    fn build(&self, config: &ApiConfig) -> Result<Request<Bytes>, BuildError> {
+        let url = config.endpoint(&format!("teams/{}", self.team_id))?;
+        Ok(config.request(Method::GET, &url).body(Bytes::new())?)
+    }
+
+    fn parse(&self, response: Response<Bytes>) -> Result<Self::Output, ApiError> {
+        expect_json(response, StatusCode::OK)
+    }
+}

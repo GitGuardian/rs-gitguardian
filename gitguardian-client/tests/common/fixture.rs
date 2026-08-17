@@ -1,18 +1,31 @@
 use gitguardian_api::api::v1::honeytoken::CreateHoneytoken;
 use gitguardian_api::api::v1::honeytoken_with_context::CreateHoneytokenWithContext;
 use gitguardian_api::api::v1::invitation::CreateInvitation;
+use gitguardian_api::api::v1::invitation::ListInvitations;
 use gitguardian_api::api::v1::jwt::CreateJwt;
+use gitguardian_api::api::v1::member::{ListMembers, RetrieveMember};
 use gitguardian_api::api::v1::multiscan::MultiScan;
 use gitguardian_api::api::v1::scan::Scan;
 use gitguardian_api::api::v1::scan_create_incidents::ScanCreateIncidents;
-use gitguardian_api::api::v1::team::{CreateTeam, ListTeams};
+use gitguardian_api::api::v1::team::{CreateTeam, ListTeams, RetrieveTeam};
+use gitguardian_api::api::v1::team_invitation::ListTeamInvitations;
+use gitguardian_api::api::v1::team_membership::ListTeamMemberships;
 use gitguardian_api::models::document::Document;
 use gitguardian_api::models::document_location::DocumentLocation;
 use gitguardian_api::models::honeytoken::r#type::HoneytokenType;
+use gitguardian_api::models::invitation::ordering::InvitationOrdering;
+use gitguardian_api::models::member::access_level::AccessLevel;
+use gitguardian_api::models::member::ordering::MemberOrdering;
 use gitguardian_api::models::pagination::Pagination;
+use gitguardian_api::models::team::incident_permission::IncidentPermission;
+use gitguardian_api::models::team::permission::TeamPermission;
 use gitguardian_api::uuid::Uuid;
 
 pub const SOURCE_UUID: Uuid = Uuid::from_u128(0x550e8400_e29b_41d4_a716_446655440000);
+
+pub const TEAM_ID: u32 = 3252;
+
+pub const MEMBER_ID: u32 = 3252;
 
 pub fn document() -> Document {
     Document::new("aws_key = AKIA123").with_filename("intro.py")
@@ -70,6 +83,52 @@ pub fn list_teams() -> ListTeams {
         is_global: Some(false),
         ..Default::default()
     }
+}
+
+pub fn retrieve_team() -> RetrieveTeam {
+    RetrieveTeam::new(TEAM_ID)
+}
+
+pub fn list_invitations() -> ListInvitations {
+    ListInvitations {
+        page: Pagination {
+            per_page: Some(1),
+            ..Default::default()
+        },
+        ordering: Some(InvitationOrdering::DateDesc),
+        ..Default::default()
+    }
+}
+
+pub fn list_members() -> ListMembers {
+    ListMembers {
+        page: Pagination {
+            per_page: Some(1),
+            ..Default::default()
+        },
+        access_level: Some(AccessLevel::Manager),
+        active: Some(true),
+        ordering: Some(MemberOrdering::CreatedAtDesc),
+        ..Default::default()
+    }
+}
+
+pub fn retrieve_member() -> RetrieveMember {
+    RetrieveMember::new(MEMBER_ID)
+}
+
+pub fn list_team_invitations() -> ListTeamInvitations {
+    let mut call = ListTeamInvitations::new(TEAM_ID);
+    call.page.per_page = Some(1);
+    call.incident_permission = Some(IncidentPermission::FullAccess);
+    call
+}
+
+pub fn list_team_memberships() -> ListTeamMemberships {
+    let mut call = ListTeamMemberships::new(TEAM_ID);
+    call.page.per_page = Some(1);
+    call.team_permission = Some(TeamPermission::CanManage);
+    call
 }
 
 pub fn create_invitation() -> CreateInvitation {
