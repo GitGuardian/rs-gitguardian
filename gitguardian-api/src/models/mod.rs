@@ -1,5 +1,6 @@
 pub mod document;
 pub mod document_location;
+pub mod health_status;
 pub mod honeytoken;
 pub mod invitation;
 pub mod jwt;

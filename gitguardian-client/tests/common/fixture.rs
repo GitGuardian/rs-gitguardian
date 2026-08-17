@@ -1,3 +1,4 @@
+use gitguardian_api::api::v1::health::CheckHealth;
 use gitguardian_api::api::v1::honeytoken::CreateHoneytoken;
 use gitguardian_api::api::v1::honeytoken_with_context::CreateHoneytokenWithContext;
 use gitguardian_api::api::v1::invitation::CreateInvitation;
@@ -159,4 +160,8 @@ pub fn update_team_sources() -> UpdateTeamSources {
     let mut call = UpdateTeamSources::new(TEAM_ID);
     call.sources_to_add = vec![SOURCE_ID];
     call
+}
+
+pub fn check_health() -> CheckHealth {
+    CheckHealth
 }

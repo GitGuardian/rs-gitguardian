@@ -1,3 +1,4 @@
+pub mod health;
 pub mod honeytoken;
 pub mod honeytoken_with_context;
 pub mod invitation;
