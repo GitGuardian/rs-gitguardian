@@ -5,6 +5,7 @@ pub mod invitation;
 pub mod jwt;
 pub mod member;
 pub mod multiscan;
+pub mod quota;
 pub mod scan;
 pub mod scan_create_incidents;
 pub mod team;

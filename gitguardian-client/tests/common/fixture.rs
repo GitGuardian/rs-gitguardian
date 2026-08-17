@@ -6,6 +6,7 @@ use gitguardian_api::api::v1::invitation::ListInvitations;
 use gitguardian_api::api::v1::jwt::CreateJwt;
 use gitguardian_api::api::v1::member::{ListMembers, RetrieveMember};
 use gitguardian_api::api::v1::multiscan::MultiScan;
+use gitguardian_api::api::v1::quota::RetrieveQuotas;
 use gitguardian_api::api::v1::scan::Scan;
 use gitguardian_api::api::v1::scan_create_incidents::ScanCreateIncidents;
 use gitguardian_api::api::v1::team::{CreateTeam, ListTeams, RetrieveTeam};
@@ -164,4 +165,8 @@ pub fn update_team_sources() -> UpdateTeamSources {
 
 pub fn check_health() -> CheckHealth {
     CheckHealth
+}
+
+pub fn retrieve_quotas() -> RetrieveQuotas {
+    RetrieveQuotas
 }
