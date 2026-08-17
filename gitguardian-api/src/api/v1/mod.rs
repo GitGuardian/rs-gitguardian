@@ -1,3 +1,4 @@
+pub mod api_token;
 pub mod health;
 pub mod honeytoken;
 pub mod honeytoken_with_context;

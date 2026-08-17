@@ -1,3 +1,4 @@
+use gitguardian_api::api::v1::api_token::{RetrieveApiToken, RetrieveCurrentApiToken};
 use gitguardian_api::api::v1::health::CheckHealth;
 use gitguardian_api::api::v1::honeytoken::CreateHoneytoken;
 use gitguardian_api::api::v1::honeytoken_with_context::CreateHoneytokenWithContext;
@@ -33,6 +34,8 @@ pub const MEMBER_ID: u32 = 3252;
 pub const INVITATION_ID: u32 = 4851;
 
 pub const SOURCE_ID: u32 = 6531;
+
+pub const TOKEN_ID: Uuid = Uuid::from_u128(0x5ddaad0c_5a0c_4674_beb5_1cd198d13360);
 
 pub fn document() -> Document {
     Document::new("aws_key = AKIA123").with_filename("intro.py")
@@ -169,4 +172,12 @@ pub fn check_health() -> CheckHealth {
 
 pub fn retrieve_quotas() -> RetrieveQuotas {
     RetrieveQuotas
+}
+
+pub fn retrieve_current_api_token() -> RetrieveCurrentApiToken {
+    RetrieveCurrentApiToken
+}
+
+pub fn retrieve_api_token() -> RetrieveApiToken {
+    RetrieveApiToken::new(TOKEN_ID)
 }
