@@ -11,7 +11,7 @@ use crate::{
         pagination::{Cursor, Pagination},
     },
     util::{
-        json::{expect_json, expect_json_page},
+        json::{expect_json, expect_json_page, json_body},
         url::set_query,
     },
 };
@@ -113,6 +113,78 @@ impl ApiCall for RetrieveMember {
     fn build(&self, config: &ApiConfig) -> Result<Request<Bytes>, BuildError> {
         let url = config.endpoint(&format!("members/{}", self.member_id))?;
         Ok(config.request(Method::GET, &url).body(Bytes::new())?)
+    }
+
+    fn parse(&self, response: Response<Bytes>) -> Result<Self::Output, ApiError> {
+        expect_json(response, StatusCode::OK)
+    }
+}
+
+/// Query parameters of a member update request
+#[derive(Clone, Debug, Serialize)]
+struct UpdateMemberQueryParam {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    send_email: Option<bool>,
+}
+
+/// Body of a member update request
+#[derive(Clone, Debug, Serialize)]
+struct UpdateMemberBody {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    access_level: Option<AccessLevel>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    active: Option<bool>,
+}
+
+/// Update a member.
+///
+/// Update an existing workspace member.
+///
+/// If you are using a personal access token, you need to have an access level greater or
+/// equal to `manager`.
+///
+/// `PATCH /v1/members/{member_id}`, answering `200` Workspace member details, `400` Invalid
+/// data, `401` Invalid API key, `403` Forbidden Call, `404` Member not found or `503` API
+/// under maintenance.
+#[derive(Clone, Debug)]
+pub struct UpdateMember {
+    /// The id of the workspace member.
+    pub member_id: u32,
+    pub access_level: Option<AccessLevel>,
+    pub active: Option<bool>,
+    /// Whether to notify the member about the update.
+    pub send_email: Option<bool>,
+}
+
+impl UpdateMember {
+    pub fn new(member_id: u32) -> Self {
+        Self {
+            member_id,
+            access_level: None,
+            active: None,
+            send_email: None,
+        }
+    }
+}
+
+impl ApiCall for UpdateMember {
+    type Output = Member;
+
+    fn build(&self, config: &ApiConfig) -> Result<Request<Bytes>, BuildError> {
+        let mut url = config.endpoint(&format!("members/{}", self.member_id))?;
+        set_query(
+            &mut url,
+            &UpdateMemberQueryParam {
+                send_email: self.send_email,
+            },
+        )?;
+        json_body(
+            config.request(Method::PATCH, &url),
+            &UpdateMemberBody {
+                access_level: self.access_level,
+                active: self.active,
+            },
+        )
     }
 
     fn parse(&self, response: Response<Bytes>) -> Result<Self::Output, ApiError> {

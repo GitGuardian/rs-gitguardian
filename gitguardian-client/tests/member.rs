@@ -2,7 +2,7 @@
 
 mod common;
 
-use common::fixture::{list_members, retrieve_member};
+use common::fixture::{list_members, retrieve_member, update_member};
 use gitguardian_mock::MockServer;
 
 #[cfg(feature = "ureq")]
@@ -56,6 +56,19 @@ mod ureq {
         assert!(member.id > 0);
         assert!(!member.email.is_empty());
         assert_eq!(member.role, member.access_level);
+    }
+
+    #[test]
+    /// GIVEN a member id and fields to change
+    /// WHEN updating that member
+    /// THEN the updated member is returned
+    fn updates_member() {
+        let member = client(MockServer::shared())
+            .send(&update_member())
+            .expect("member update should succeed");
+
+        assert!(member.id > 0);
+        assert!(!member.email.is_empty());
     }
 }
 
@@ -114,5 +127,19 @@ mod reqwest {
         assert!(member.id > 0);
         assert!(!member.email.is_empty());
         assert_eq!(member.role, member.access_level);
+    }
+
+    #[tokio::test]
+    /// GIVEN a member id and fields to change
+    /// WHEN updating that member
+    /// THEN the updated member is returned
+    async fn updates_member() {
+        let member = client(MockServer::shared())
+            .send(&update_member())
+            .await
+            .expect("member update should succeed");
+
+        assert!(member.id > 0);
+        assert!(!member.email.is_empty());
     }
 }

@@ -3,7 +3,7 @@
 mod common;
 
 use common::assert_api_status;
-use common::fixture::{create_team, list_teams, retrieve_team};
+use common::fixture::{create_team, list_teams, retrieve_team, update_team};
 use gitguardian_mock::MockServer;
 use http::StatusCode;
 
@@ -102,6 +102,19 @@ mod ureq {
         let team = client(server)
             .send(&retrieve_team())
             .expect("team retrieval should succeed");
+
+        assert!(!team.name.is_empty());
+        assert!(!team.gitguardian_url.is_empty());
+    }
+
+    #[test]
+    /// GIVEN a team id and fields to change
+    /// WHEN updating that team
+    /// THEN the updated team is returned
+    fn updates_team() {
+        let team = client(MockServer::shared())
+            .send(&update_team())
+            .expect("team update should succeed");
 
         assert!(!team.name.is_empty());
         assert!(!team.gitguardian_url.is_empty());
@@ -210,6 +223,20 @@ mod reqwest {
             .send(&retrieve_team())
             .await
             .expect("team retrieval should succeed");
+
+        assert!(!team.name.is_empty());
+        assert!(!team.gitguardian_url.is_empty());
+    }
+
+    #[tokio::test]
+    /// GIVEN a team id and fields to change
+    /// WHEN updating that team
+    /// THEN the updated team is returned
+    async fn updates_team() {
+        let team = client(MockServer::shared())
+            .send(&update_team())
+            .await
+            .expect("team update should succeed");
 
         assert!(!team.name.is_empty());
         assert!(!team.gitguardian_url.is_empty());

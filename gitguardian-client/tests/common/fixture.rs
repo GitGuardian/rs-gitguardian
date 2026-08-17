@@ -5,13 +5,13 @@ use gitguardian_api::api::v1::honeytoken_with_context::CreateHoneytokenWithConte
 use gitguardian_api::api::v1::invitation::CreateInvitation;
 use gitguardian_api::api::v1::invitation::ListInvitations;
 use gitguardian_api::api::v1::jwt::CreateJwt;
-use gitguardian_api::api::v1::member::{ListMembers, RetrieveMember};
+use gitguardian_api::api::v1::member::{ListMembers, RetrieveMember, UpdateMember};
 use gitguardian_api::api::v1::multiscan::MultiScan;
 use gitguardian_api::api::v1::quota::RetrieveQuotas;
 use gitguardian_api::api::v1::scan::Scan;
 use gitguardian_api::api::v1::scan_create_incidents::ScanCreateIncidents;
 use gitguardian_api::api::v1::source::ListSources;
-use gitguardian_api::api::v1::team::{CreateTeam, ListTeams, RetrieveTeam};
+use gitguardian_api::api::v1::team::{CreateTeam, ListTeams, RetrieveTeam, UpdateTeam};
 use gitguardian_api::api::v1::team_invitation::{CreateTeamInvitation, ListTeamInvitations};
 use gitguardian_api::api::v1::team_membership::{CreateTeamMembership, ListTeamMemberships};
 use gitguardian_api::api::v1::team_source::{ListTeamSources, UpdateTeamSources};
@@ -202,5 +202,20 @@ pub fn list_team_sources() -> ListTeamSources {
     let mut call = ListTeamSources::new(TEAM_ID);
     call.page.per_page = Some(1);
     call.health = Some(SourceHealth::Safe);
+    call
+}
+
+pub fn update_member() -> UpdateMember {
+    let mut call = UpdateMember::new(MEMBER_ID);
+    call.access_level = Some(AccessLevel::Member);
+    call.active = Some(true);
+    call.send_email = Some(false);
+    call
+}
+
+pub fn update_team() -> UpdateTeam {
+    let mut call = UpdateTeam::new(TEAM_ID);
+    call.name = Some("feature team B".to_owned());
+    call.description = Some("Description of my team".to_owned());
     call
 }

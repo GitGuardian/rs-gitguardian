@@ -151,3 +151,61 @@ impl ApiCall for RetrieveTeam {
         expect_json(response, StatusCode::OK)
     }
 }
+
+/// Body of a team update request
+#[derive(Clone, Debug, Serialize)]
+struct UpdateTeamBody<'a> {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    name: Option<&'a str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    description: Option<&'a str>,
+}
+
+/// Update a team.
+///
+/// Update a team's name and/or its description.
+///
+/// If you are using a personal access token, you must have "can manage" permission on the
+/// team or be a workspace manager.
+///
+/// The "All-incidents" team (`is_global=true`) cannot be updated.
+///
+/// `PATCH /v1/teams/{team_id}`, answering `200` The team was updated successfully, `400`
+/// Invalid data, `401` Invalid API key or `503` API under maintenance.
+#[derive(Clone, Debug)]
+pub struct UpdateTeam {
+    /// The id of the team.
+    pub team_id: u32,
+    pub name: Option<String>,
+    /// Team description.
+    pub description: Option<String>,
+}
+
+impl UpdateTeam {
+    pub fn new(team_id: u32) -> Self {
+        Self {
+            team_id,
+            name: None,
+            description: None,
+        }
+    }
+}
+
+impl ApiCall for UpdateTeam {
+    type Output = Team;
+
+    fn build(&self, config: &ApiConfig) -> Result<Request<Bytes>, BuildError> {
+        let url = config.endpoint(&format!("teams/{}", self.team_id))?;
+        json_body(
+            config.request(Method::PATCH, &url),
+            &UpdateTeamBody {
+                name: self.name.as_deref(),
+                description: self.description.as_deref(),
+            },
+        )
+    }
+
+    fn parse(&self, response: Response<Bytes>) -> Result<Self::Output, ApiError> {
+        expect_json(response, StatusCode::OK)
+    }
+}
