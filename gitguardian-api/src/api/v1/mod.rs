@@ -9,6 +9,7 @@ pub mod multiscan;
 pub mod quota;
 pub mod scan;
 pub mod scan_create_incidents;
+pub mod source;
 pub mod team;
 pub mod team_invitation;
 pub mod team_membership;

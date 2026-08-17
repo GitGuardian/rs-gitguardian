@@ -12,5 +12,6 @@ pub mod pagination;
 pub mod policy_break;
 pub mod quota;
 pub mod scan_result;
+pub mod source;
 pub mod team;
 pub mod validity;

@@ -10,6 +10,7 @@ use gitguardian_api::api::v1::multiscan::MultiScan;
 use gitguardian_api::api::v1::quota::RetrieveQuotas;
 use gitguardian_api::api::v1::scan::Scan;
 use gitguardian_api::api::v1::scan_create_incidents::ScanCreateIncidents;
+use gitguardian_api::api::v1::source::ListSources;
 use gitguardian_api::api::v1::team::{CreateTeam, ListTeams, RetrieveTeam};
 use gitguardian_api::api::v1::team_invitation::{CreateTeamInvitation, ListTeamInvitations};
 use gitguardian_api::api::v1::team_membership::{CreateTeamMembership, ListTeamMemberships};
@@ -21,6 +22,8 @@ use gitguardian_api::models::invitation::ordering::InvitationOrdering;
 use gitguardian_api::models::member::access_level::AccessLevel;
 use gitguardian_api::models::member::ordering::MemberOrdering;
 use gitguardian_api::models::pagination::Pagination;
+use gitguardian_api::models::source::health::SourceHealth;
+use gitguardian_api::models::source::ordering::SourceOrdering;
 use gitguardian_api::models::team::incident_permission::IncidentPermission;
 use gitguardian_api::models::team::permission::TeamPermission;
 use gitguardian_api::uuid::Uuid;
@@ -180,4 +183,17 @@ pub fn retrieve_current_api_token() -> RetrieveCurrentApiToken {
 
 pub fn retrieve_api_token() -> RetrieveApiToken {
     RetrieveApiToken::new(TOKEN_ID)
+}
+
+pub fn list_sources() -> ListSources {
+    ListSources {
+        page: Pagination {
+            per_page: Some(1),
+            ..Default::default()
+        },
+        health: Some(SourceHealth::AtRisk),
+        monitored: Some(true),
+        ordering: Some(SourceOrdering::LastScanDateDesc),
+        ..Default::default()
+    }
 }
