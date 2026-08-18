@@ -37,7 +37,9 @@ The HTTP client uses `ureq` by default. To use `reqwest` as an HTTP client, add 
 cargo add gitguardian-client --no-default-features --features reqwest
 ```
 
-## Examples
+## Usage
+
+Each request is represented by a struct instance that can be sent by the selected client. 
 
 ### Scanning text content
 
@@ -52,8 +54,9 @@ let document = "
 ";
 
 let client = Client::new(ApiConfig::new(&api_key)?);
+let request = Scan::new(Document::new(document));
 
-match client.send(&Scan::new(Document::new(document))) {
+match client.send(&request) {
     Ok(scan_result) => println!("{} policy breaks", scan_result.policy_break_count),
     Err(error) => eprintln!("{error}"),
 }
@@ -66,7 +69,7 @@ let api_key = env::var("GITGUARDIAN_API_KEY")?;
 let client = Client::new(ApiConfig::new(&api_key)?);
 
 // Create a list of documents for scanning
-let to_scan: Vec<Document> = paths
+let request: MultiScan = paths
     .iter()
     .map(|path| {
         let content = fs::read(path).unwrap_or_default();
@@ -75,16 +78,32 @@ let to_scan: Vec<Document> = paths
     })
     .collect();
 
-let scan = client.send(&MultiScan::new(to_scan))?;
+let scan = client.send(&request)?;
 ```
 
-### Dependencies
+### Paginating results
 
-rs-gitguardian depends on these excellent libraries:
+Paginated routes are iterators that follow the cursor until the last page.
 
-- `http` - Request and response types
-- `serde` - Request (de)serialization
-- `chrono` - Timestamps
-- `uuid` - Identifiers
-- `reqwest` - Asynchronous HTTP client
-- `ureq` - Blocking HTTP client
+```rust
+let api_key = env::var("GITGUARDIAN_API_KEY")?;
+let client = Client::new(ApiConfig::new(&api_key)?);
+
+for page in client.paginate(ListTeams::default()) {
+    for team in page?.items {
+        println!("{}", team.name);
+    }
+}
+```
+
+### Using the async client
+
+With the `reqwest` feature, `send` is awaited.
+
+```rust
+let api_key = env::var("GITGUARDIAN_API_KEY")?;
+let client = Client::new(ApiConfig::new(&api_key)?);
+
+let quotas = client.send(&RetrieveQuotas).await?;
+println!("{} API calls remaining", quotas.content.remaining);
+```
