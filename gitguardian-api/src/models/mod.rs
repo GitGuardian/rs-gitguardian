@@ -1,4 +1,5 @@
 pub mod api_token;
+pub mod custom_tag;
 pub mod document;
 pub mod document_location;
 pub mod health_status;
@@ -12,6 +13,7 @@ pub mod pagination;
 pub mod policy_break;
 pub mod quota;
 pub mod scan_result;
+pub mod secret_incident;
 pub mod source;
 pub mod team;
 pub mod validity;

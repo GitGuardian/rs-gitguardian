@@ -4,11 +4,11 @@ use chrono::{DateTime, Utc};
 use serde::Deserialize;
 use uuid::Uuid;
 
+use crate::models::custom_tag::CustomTag;
 use crate::models::honeytoken::{
-    custom_tag::CustomTag, status::HoneytokenStatus, tag::HoneytokenTag, r#type::HoneytokenType,
+    status::HoneytokenStatus, tag::HoneytokenTag, r#type::HoneytokenType,
 };
 
-pub mod custom_tag;
 pub mod status;
 pub mod tag;
 pub mod r#type;

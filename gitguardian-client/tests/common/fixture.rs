@@ -10,6 +10,7 @@ use gitguardian_api::api::v1::multiscan::MultiScan;
 use gitguardian_api::api::v1::quota::RetrieveQuotas;
 use gitguardian_api::api::v1::scan::Scan;
 use gitguardian_api::api::v1::scan_create_incidents::ScanCreateIncidents;
+use gitguardian_api::api::v1::secret_incident::RetrieveSecretIncident;
 use gitguardian_api::api::v1::source::ListSources;
 use gitguardian_api::api::v1::team::{CreateTeam, DeleteTeam, ListTeams, RetrieveTeam, UpdateTeam};
 use gitguardian_api::api::v1::team_invitation::{
@@ -47,6 +48,8 @@ pub const TOKEN_ID: Uuid = Uuid::from_u128(0x5ddaad0c_5a0c_4674_beb5_1cd198d1336
 pub const TEAM_INVITATION_ID: u32 = 3252;
 
 pub const TEAM_MEMBERSHIP_ID: u32 = 1234;
+
+pub const INCIDENT_ID: u32 = 3759;
 
 pub fn document() -> Document {
     Document::new("aws_key = AKIA123").with_filename("intro.py")
@@ -249,5 +252,11 @@ pub fn delete_team_invitation() -> DeleteTeamInvitation {
 pub fn delete_team_membership() -> DeleteTeamMembership {
     let mut call = DeleteTeamMembership::new(TEAM_ID, TEAM_MEMBERSHIP_ID);
     call.send_email = Some(false);
+    call
+}
+
+pub fn retrieve_secret_incident() -> RetrieveSecretIncident {
+    let mut call = RetrieveSecretIncident::new(INCIDENT_ID);
+    call.with_occurrences = Some(1);
     call
 }

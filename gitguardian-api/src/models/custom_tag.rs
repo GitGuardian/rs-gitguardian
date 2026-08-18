@@ -6,5 +6,6 @@ use uuid::Uuid;
 pub struct CustomTag {
     pub id: Uuid,
     pub key: String,
-    pub value: String,
+    #[serde(default)]
+    pub value: Option<String>,
 }
