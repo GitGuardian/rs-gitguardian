@@ -63,11 +63,11 @@ pub fn documents() -> Vec<Document> {
 }
 
 pub fn scan() -> Scan {
-    Scan::new(document())
+    document().into()
 }
 
 pub fn multiscan() -> MultiScan {
-    MultiScan::new(documents())
+    documents().into_iter().collect()
 }
 
 pub fn scan_create_incidents() -> ScanCreateIncidents {

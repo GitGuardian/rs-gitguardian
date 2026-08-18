@@ -46,6 +46,12 @@ impl Scan {
     }
 }
 
+impl From<Document> for Scan {
+    fn from(document: Document) -> Self {
+        Self::new(document)
+    }
+}
+
 impl ApiCall for Scan {
     type Output = ScanResult;
 

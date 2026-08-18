@@ -53,6 +53,12 @@ impl MultiScan {
     }
 }
 
+impl FromIterator<Document> for MultiScan {
+    fn from_iter<I: IntoIterator<Item = Document>>(iter: I) -> Self {
+        Self::new(iter.into_iter().collect())
+    }
+}
+
 impl ApiCall for MultiScan {
     type Output = Vec<ScanResult>;
 
