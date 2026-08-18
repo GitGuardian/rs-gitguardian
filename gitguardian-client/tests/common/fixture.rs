@@ -2,18 +2,22 @@ use gitguardian_api::api::v1::api_token::{RetrieveApiToken, RetrieveCurrentApiTo
 use gitguardian_api::api::v1::health::CheckHealth;
 use gitguardian_api::api::v1::honeytoken::CreateHoneytoken;
 use gitguardian_api::api::v1::honeytoken_with_context::CreateHoneytokenWithContext;
-use gitguardian_api::api::v1::invitation::CreateInvitation;
 use gitguardian_api::api::v1::invitation::ListInvitations;
+use gitguardian_api::api::v1::invitation::{CreateInvitation, DeleteInvitation};
 use gitguardian_api::api::v1::jwt::CreateJwt;
-use gitguardian_api::api::v1::member::{ListMembers, RetrieveMember, UpdateMember};
+use gitguardian_api::api::v1::member::{DeleteMember, ListMembers, RetrieveMember, UpdateMember};
 use gitguardian_api::api::v1::multiscan::MultiScan;
 use gitguardian_api::api::v1::quota::RetrieveQuotas;
 use gitguardian_api::api::v1::scan::Scan;
 use gitguardian_api::api::v1::scan_create_incidents::ScanCreateIncidents;
 use gitguardian_api::api::v1::source::ListSources;
-use gitguardian_api::api::v1::team::{CreateTeam, ListTeams, RetrieveTeam, UpdateTeam};
-use gitguardian_api::api::v1::team_invitation::{CreateTeamInvitation, ListTeamInvitations};
-use gitguardian_api::api::v1::team_membership::{CreateTeamMembership, ListTeamMemberships};
+use gitguardian_api::api::v1::team::{CreateTeam, DeleteTeam, ListTeams, RetrieveTeam, UpdateTeam};
+use gitguardian_api::api::v1::team_invitation::{
+    CreateTeamInvitation, DeleteTeamInvitation, ListTeamInvitations,
+};
+use gitguardian_api::api::v1::team_membership::{
+    CreateTeamMembership, DeleteTeamMembership, ListTeamMemberships,
+};
 use gitguardian_api::api::v1::team_source::{ListTeamSources, UpdateTeamSources};
 use gitguardian_api::models::document::Document;
 use gitguardian_api::models::document_location::DocumentLocation;
@@ -39,6 +43,10 @@ pub const INVITATION_ID: u32 = 4851;
 pub const SOURCE_ID: u32 = 6531;
 
 pub const TOKEN_ID: Uuid = Uuid::from_u128(0x5ddaad0c_5a0c_4674_beb5_1cd198d13360);
+
+pub const TEAM_INVITATION_ID: u32 = 3252;
+
+pub const TEAM_MEMBERSHIP_ID: u32 = 1234;
 
 pub fn document() -> Document {
     Document::new("aws_key = AKIA123").with_filename("intro.py")
@@ -217,5 +225,29 @@ pub fn update_team() -> UpdateTeam {
     let mut call = UpdateTeam::new(TEAM_ID);
     call.name = Some("feature team B".to_owned());
     call.description = Some("Description of my team".to_owned());
+    call
+}
+
+pub fn delete_member() -> DeleteMember {
+    let mut call = DeleteMember::new(MEMBER_ID);
+    call.send_email = Some(false);
+    call
+}
+
+pub fn delete_team() -> DeleteTeam {
+    DeleteTeam::new(TEAM_ID)
+}
+
+pub fn delete_invitation() -> DeleteInvitation {
+    DeleteInvitation::new(INVITATION_ID)
+}
+
+pub fn delete_team_invitation() -> DeleteTeamInvitation {
+    DeleteTeamInvitation::new(TEAM_ID, TEAM_INVITATION_ID)
+}
+
+pub fn delete_team_membership() -> DeleteTeamMembership {
+    let mut call = DeleteTeamMembership::new(TEAM_ID, TEAM_MEMBERSHIP_ID);
+    call.send_email = Some(false);
     call
 }

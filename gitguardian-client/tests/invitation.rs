@@ -2,7 +2,7 @@
 
 mod common;
 
-use common::fixture::{create_invitation, list_invitations};
+use common::fixture::{create_invitation, delete_invitation, list_invitations};
 use gitguardian_api::models::invitation::access_level::InvitationAccessLevel;
 use gitguardian_mock::MockServer;
 
@@ -25,6 +25,7 @@ mod ureq {
         assert!(!invitation.email.is_empty());
         assert_eq!(invitation.access_level, InvitationAccessLevel::Manager);
     }
+
     #[test]
     /// GIVEN pagination and ordering parameters
     /// WHEN listing invitations
@@ -42,6 +43,16 @@ mod ureq {
                 .iter()
                 .all(|invitation| !invitation.email.is_empty())
         );
+    }
+
+    #[test]
+    /// GIVEN an invitation id
+    /// WHEN deleting it
+    /// THEN the empty response is accepted
+    fn deletes_invitation() {
+        client(MockServer::shared())
+            .send(&delete_invitation())
+            .expect("deletion should succeed");
     }
 }
 
@@ -65,6 +76,7 @@ mod reqwest {
         assert!(!invitation.email.is_empty());
         assert_eq!(invitation.access_level, InvitationAccessLevel::Manager);
     }
+
     #[tokio::test]
     /// GIVEN pagination and ordering parameters
     /// WHEN listing invitations
@@ -83,5 +95,16 @@ mod reqwest {
                 .iter()
                 .all(|invitation| !invitation.email.is_empty())
         );
+    }
+
+    #[tokio::test]
+    /// GIVEN an invitation id
+    /// WHEN deleting it
+    /// THEN the empty response is accepted
+    async fn deletes_invitation() {
+        client(MockServer::shared())
+            .send(&delete_invitation())
+            .await
+            .expect("deletion should succeed");
     }
 }

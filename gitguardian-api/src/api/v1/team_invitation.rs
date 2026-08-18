@@ -14,7 +14,7 @@ use crate::{
         },
     },
     util::{
-        json::{expect_json, expect_json_page, json_body},
+        json::{expect_json, expect_json_page, expect_no_content, json_body},
         url::set_query,
     },
 };
@@ -167,5 +167,48 @@ impl ApiCall for CreateTeamInvitation {
 
     fn parse(&self, response: Response<Bytes>) -> Result<Self::Output, ApiError> {
         expect_json(response, StatusCode::CREATED)
+    }
+}
+
+/// Delete a team invitation.
+///
+/// Delete an existing team invitation.
+///
+/// If you are using a personal access token, you must have "can manage" permission on the
+/// team or be a workspace manager.
+///
+/// `DELETE /v1/teams/{team_id}/team_invitations/{team_invitation_id}`, answering `204` Team
+/// invitation was deleted successfully, `401` Invalid API key, `403` Permission denied,
+/// `404` Not found or `503` API under maintenance.
+#[derive(Clone, Debug)]
+pub struct DeleteTeamInvitation {
+    /// The id of the team.
+    pub team_id: u32,
+    /// The id of the team invitation.
+    pub team_invitation_id: u32,
+}
+
+impl DeleteTeamInvitation {
+    pub fn new(team_id: u32, team_invitation_id: u32) -> Self {
+        Self {
+            team_id,
+            team_invitation_id,
+        }
+    }
+}
+
+impl ApiCall for DeleteTeamInvitation {
+    type Output = ();
+
+    fn build(&self, config: &ApiConfig) -> Result<Request<Bytes>, BuildError> {
+        let url = config.endpoint(&format!(
+            "teams/{}/team_invitations/{}",
+            self.team_id, self.team_invitation_id
+        ))?;
+        Ok(config.request(Method::DELETE, &url).body(Bytes::new())?)
+    }
+
+    fn parse(&self, response: Response<Bytes>) -> Result<Self::Output, ApiError> {
+        expect_no_content(response, StatusCode::NO_CONTENT)
     }
 }

@@ -3,7 +3,7 @@
 mod common;
 
 use common::assert_api_status;
-use common::fixture::{create_team, list_teams, retrieve_team, update_team};
+use common::fixture::{create_team, delete_team, list_teams, retrieve_team, update_team};
 use gitguardian_mock::MockServer;
 use http::StatusCode;
 
@@ -26,6 +26,7 @@ mod ureq {
         assert!(!team.name.is_empty());
         assert!(!team.gitguardian_url.is_empty());
     }
+
     #[test]
     /// GIVEN pagination and filter parameters
     /// WHEN listing teams
@@ -119,6 +120,16 @@ mod ureq {
         assert!(!team.name.is_empty());
         assert!(!team.gitguardian_url.is_empty());
     }
+
+    #[test]
+    /// GIVEN a team id
+    /// WHEN deleting it
+    /// THEN the empty response is accepted
+    fn deletes_team() {
+        client(MockServer::shared())
+            .send(&delete_team())
+            .expect("deletion should succeed");
+    }
 }
 
 #[cfg(feature = "reqwest")]
@@ -142,6 +153,7 @@ mod reqwest {
         assert!(!team.name.is_empty());
         assert!(!team.gitguardian_url.is_empty());
     }
+
     #[tokio::test]
     /// GIVEN pagination and filter parameters
     /// WHEN listing teams
@@ -240,5 +252,16 @@ mod reqwest {
 
         assert!(!team.name.is_empty());
         assert!(!team.gitguardian_url.is_empty());
+    }
+
+    #[tokio::test]
+    /// GIVEN a team id
+    /// WHEN deleting it
+    /// THEN the empty response is accepted
+    async fn deletes_team() {
+        client(MockServer::shared())
+            .send(&delete_team())
+            .await
+            .expect("deletion should succeed");
     }
 }

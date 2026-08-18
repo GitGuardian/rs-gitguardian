@@ -13,7 +13,7 @@ use crate::{
         pagination::{Cursor, Pagination},
     },
     util::{
-        json::{expect_json, expect_json_page, json_body},
+        json::{expect_json, expect_json_page, expect_no_content, json_body},
         url::set_query,
     },
 };
@@ -145,5 +145,40 @@ impl ApiCall for ListInvitations {
 impl Paginated for ListInvitations {
     fn set_cursor(&mut self, cursor: Cursor) {
         self.page.cursor = Some(cursor);
+    }
+}
+
+/// Delete an invitation.
+///
+/// Delete an existing invitation.
+///
+/// If you are using a personal access token, you need to have an access level superior or
+/// equal to `manager`.
+///
+/// `DELETE /v1/invitations/{invitation_id}`, answering `204` The invitation was deleted
+/// successfully, `400` Invalid data, `401` Invalid API key, `403` Forbidden Call, `404`
+/// Invitation not found or `503` API under maintenance.
+#[derive(Clone, Debug)]
+pub struct DeleteInvitation {
+    /// The id of the invitation.
+    pub invitation_id: u32,
+}
+
+impl DeleteInvitation {
+    pub fn new(invitation_id: u32) -> Self {
+        Self { invitation_id }
+    }
+}
+
+impl ApiCall for DeleteInvitation {
+    type Output = ();
+
+    fn build(&self, config: &ApiConfig) -> Result<Request<Bytes>, BuildError> {
+        let url = config.endpoint(&format!("invitations/{}", self.invitation_id))?;
+        Ok(config.request(Method::DELETE, &url).body(Bytes::new())?)
+    }
+
+    fn parse(&self, response: Response<Bytes>) -> Result<Self::Output, ApiError> {
+        expect_no_content(response, StatusCode::NO_CONTENT)
     }
 }

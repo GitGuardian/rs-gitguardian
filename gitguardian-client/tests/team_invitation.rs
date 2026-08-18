@@ -2,7 +2,7 @@
 
 mod common;
 
-use common::fixture::{create_team_invitation, list_team_invitations};
+use common::fixture::{create_team_invitation, delete_team_invitation, list_team_invitations};
 use gitguardian_mock::MockServer;
 
 #[cfg(feature = "ureq")]
@@ -46,6 +46,7 @@ mod ureq {
 
         assert_eq!(pages.len(), 2);
     }
+
     #[test]
     /// GIVEN a team id and an invitation id
     /// WHEN creating the team invitation
@@ -59,6 +60,16 @@ mod ureq {
 
         assert!(invitation.id > 0);
         assert!(invitation.invitation_id > 0);
+    }
+
+    #[test]
+    /// GIVEN a team id and a team invitation id
+    /// WHEN deleting it
+    /// THEN the empty response is accepted
+    fn deletes_team_invitation() {
+        client(MockServer::shared())
+            .send(&delete_team_invitation())
+            .expect("deletion should succeed");
     }
 }
 
@@ -106,6 +117,7 @@ mod reqwest {
 
         assert_eq!(pages.len(), 2);
     }
+
     #[tokio::test]
     /// GIVEN a team id and an invitation id
     /// WHEN creating the team invitation
@@ -120,5 +132,16 @@ mod reqwest {
 
         assert!(invitation.id > 0);
         assert!(invitation.invitation_id > 0);
+    }
+
+    #[tokio::test]
+    /// GIVEN a team id and a team invitation id
+    /// WHEN deleting it
+    /// THEN the empty response is accepted
+    async fn deletes_team_invitation() {
+        client(MockServer::shared())
+            .send(&delete_team_invitation())
+            .await
+            .expect("deletion should succeed");
     }
 }

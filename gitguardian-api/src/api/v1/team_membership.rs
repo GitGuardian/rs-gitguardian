@@ -14,7 +14,7 @@ use crate::{
         },
     },
     util::{
-        json::{expect_json, expect_json_page, json_body},
+        json::{expect_json, expect_json_page, expect_no_content, json_body},
         url::set_query,
     },
 };
@@ -183,5 +183,64 @@ impl ApiCall for CreateTeamMembership {
 
     fn parse(&self, response: Response<Bytes>) -> Result<Self::Output, ApiError> {
         expect_json(response, StatusCode::CREATED)
+    }
+}
+
+/// Query parameters of a team membership deletion request
+#[derive(Clone, Debug, Serialize)]
+struct DeleteTeamMembershipQueryParam {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    send_email: Option<bool>,
+}
+
+/// Remove a member from a team.
+///
+/// Remove a member from a team.
+///
+/// If you are using a personal access token, you must have "can manage" permission on the
+/// team or be a workspace manager, or be the member being removed.
+///
+/// `DELETE /v1/teams/{team_id}/team_memberships/{team_membership_id}`, answering `204` Team
+/// membership was deleted successfully, `401` Invalid API key, `403` Permission denied,
+/// `404` Not found or `503` API under maintenance.
+#[derive(Clone, Debug)]
+pub struct DeleteTeamMembership {
+    /// The id of the team.
+    pub team_id: u32,
+    /// The id of the team membership.
+    pub team_membership_id: u32,
+    /// Whether to notify the member about the removal from the team.
+    pub send_email: Option<bool>,
+}
+
+impl DeleteTeamMembership {
+    pub fn new(team_id: u32, team_membership_id: u32) -> Self {
+        Self {
+            team_id,
+            team_membership_id,
+            send_email: None,
+        }
+    }
+}
+
+impl ApiCall for DeleteTeamMembership {
+    type Output = ();
+
+    fn build(&self, config: &ApiConfig) -> Result<Request<Bytes>, BuildError> {
+        let mut url = config.endpoint(&format!(
+            "teams/{}/team_memberships/{}",
+            self.team_id, self.team_membership_id
+        ))?;
+        set_query(
+            &mut url,
+            &DeleteTeamMembershipQueryParam {
+                send_email: self.send_email,
+            },
+        )?;
+        Ok(config.request(Method::DELETE, &url).body(Bytes::new())?)
+    }
+
+    fn parse(&self, response: Response<Bytes>) -> Result<Self::Output, ApiError> {
+        expect_no_content(response, StatusCode::NO_CONTENT)
     }
 }

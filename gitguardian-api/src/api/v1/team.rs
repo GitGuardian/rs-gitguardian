@@ -11,7 +11,7 @@ use crate::{
         team::Team,
     },
     util::{
-        json::{expect_json, expect_json_page, json_body},
+        json::{expect_json, expect_json_page, expect_no_content, json_body},
         url::set_query,
     },
 };
@@ -207,5 +207,42 @@ impl ApiCall for UpdateTeam {
 
     fn parse(&self, response: Response<Bytes>) -> Result<Self::Output, ApiError> {
         expect_json(response, StatusCode::OK)
+    }
+}
+
+/// Delete a team.
+///
+/// Delete an existing team.
+///
+/// If you are using a personal access token, you must have "can manage" permission on the
+/// team or be a workspace manager.
+///
+/// The "All-incidents" team (`is_global=true`) cannot be deleted.
+///
+/// `DELETE /v1/teams/{team_id}`, answering `204` The team was deleted successfully, `400`
+/// Invalid data, `401` Invalid API key, `403` Forbidden Call, `404` Team not found or `503`
+/// API under maintenance.
+#[derive(Clone, Debug)]
+pub struct DeleteTeam {
+    /// The id of the team.
+    pub team_id: u32,
+}
+
+impl DeleteTeam {
+    pub fn new(team_id: u32) -> Self {
+        Self { team_id }
+    }
+}
+
+impl ApiCall for DeleteTeam {
+    type Output = ();
+
+    fn build(&self, config: &ApiConfig) -> Result<Request<Bytes>, BuildError> {
+        let url = config.endpoint(&format!("teams/{}", self.team_id))?;
+        Ok(config.request(Method::DELETE, &url).body(Bytes::new())?)
+    }
+
+    fn parse(&self, response: Response<Bytes>) -> Result<Self::Output, ApiError> {
+        expect_no_content(response, StatusCode::NO_CONTENT)
     }
 }

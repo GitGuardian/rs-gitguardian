@@ -2,7 +2,7 @@
 
 mod common;
 
-use common::fixture::{list_members, retrieve_member, update_member};
+use common::fixture::{delete_member, list_members, retrieve_member, update_member};
 use gitguardian_mock::MockServer;
 
 #[cfg(feature = "ureq")]
@@ -69,6 +69,16 @@ mod ureq {
 
         assert!(member.id > 0);
         assert!(!member.email.is_empty());
+    }
+
+    #[test]
+    /// GIVEN a member id
+    /// WHEN deleting it
+    /// THEN the empty response is accepted
+    fn deletes_member() {
+        client(MockServer::shared())
+            .send(&delete_member())
+            .expect("deletion should succeed");
     }
 }
 
@@ -141,5 +151,16 @@ mod reqwest {
 
         assert!(member.id > 0);
         assert!(!member.email.is_empty());
+    }
+
+    #[tokio::test]
+    /// GIVEN a member id
+    /// WHEN deleting it
+    /// THEN the empty response is accepted
+    async fn deletes_member() {
+        client(MockServer::shared())
+            .send(&delete_member())
+            .await
+            .expect("deletion should succeed");
     }
 }
