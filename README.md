@@ -5,7 +5,7 @@
 [![Crates.io](https://img.shields.io/crates/v/gitguardian-client?color=%231B2D55&style=for-the-badge)](https://crates.io/crates/gitguardian-client)
 [![License](https://img.shields.io/github/license/GitGuardian/rs-gitguardian?color=%231B2D55&style=for-the-badge)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/gitguardian/rs-gitguardian?color=%231B2D55&style=for-the-badge)](https://github.com/GitGuardian/rs-gitguardian/stargazers)
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/GitGuardian/rs-gitguardian/test-lint.yml?branch=master&style=for-the-badge)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/GitGuardian/rs-gitguardian/test-lint.yml?branch=main&style=for-the-badge)
 [![Codecov](https://img.shields.io/codecov/c/github/GitGuardian/rs-gitguardian?style=for-the-badge)](https://codecov.io/gh/GitGuardian/rs-gitguardian/)
 
 API client library for the [GitGuardian API](https://api.gitguardian.com/).
@@ -39,7 +39,7 @@ cargo add gitguardian-client --no-default-features --features reqwest
 
 ## Usage
 
-Each request is represented by a struct instance that can be sent by the selected client. 
+Each request is represented by a struct instance that can be sent by the selected client.
 
 ### Scanning text content
 
