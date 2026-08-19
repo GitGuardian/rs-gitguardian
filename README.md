@@ -1,16 +1,16 @@
-<a href="https://gitguardian.com/"><img src="https://cdn.jsdelivr.net/gh/gitguardian/py-gitguardian/doc/logo.svg"></a>
+<a href="https://gitguardian.com/"><img src="doc/logo.svg" alt="GitGuardian"></a>
 
 # [rs-gitguardian](https://github.com/GitGuardian/rs-gitguardian) - GitGuardian API Client
 
 [![Crates.io](https://img.shields.io/crates/v/gitguardian-client?color=%231B2D55&style=for-the-badge)](https://crates.io/crates/gitguardian-client)
+[![docs.rs](https://img.shields.io/docsrs/gitguardian-client?color=%231B2D55&style=for-the-badge)](https://docs.rs/gitguardian-client)
 [![License](https://img.shields.io/github/license/GitGuardian/rs-gitguardian?color=%231B2D55&style=for-the-badge)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/gitguardian/rs-gitguardian?color=%231B2D55&style=for-the-badge)](https://github.com/GitGuardian/rs-gitguardian/stargazers)
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/GitGuardian/rs-gitguardian/test-lint.yml?branch=main&style=for-the-badge)
-[![Codecov](https://img.shields.io/codecov/c/github/GitGuardian/rs-gitguardian?style=for-the-badge)](https://codecov.io/gh/GitGuardian/rs-gitguardian/)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/GitGuardian/rs-gitguardian/test-lint.yml?branch=main&style=for-the-badge)](https://github.com/GitGuardian/rs-gitguardian/actions)
 
 API client library for the [GitGuardian API](https://api.gitguardian.com/).
 
-The GitGuardian API puts at your fingertips the power to detect more than 200 types of secrets in any text content, as well as other potential security vulnerabilities.
+The GitGuardian API puts at your fingertips the power to detect more than 600 types of secrets in any text content, as well as other potential security vulnerabilities.
 
 **rs-gitguardian** can be used to create integrations to scan various data sources, from your workstation's filesystem to your favorite chat application.
 
@@ -44,7 +44,6 @@ Each request is represented by a struct instance that can be sent by the selecte
 ### Scanning text content
 
 ```rust
-// please don't hardcode your gg_api_key in source code :)
 let api_key = env::var("GITGUARDIAN_API_KEY")?;
 let document = "
     import urllib.request
