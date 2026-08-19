@@ -14,9 +14,18 @@ pub struct Client {
 
 impl Client {
     pub fn new(config: ApiConfig) -> Self {
-        Self::with_agent(config, default_agent())
+        Self::with_agent(
+            config,
+            ::ureq::Agent::config_builder()
+                .http_status_as_error(false)
+                .build()
+                .new_agent(),
+        )
     }
 
+    /// The agent is recommended to be built with `http_status_as_error(false)`, so that the
+    /// API's error responses are parsed into [`Error::Api`] rather than reported as
+    /// transport errors.
     pub fn with_agent(config: ApiConfig, agent: ::ureq::Agent) -> Self {
         Self { agent, config }
     }
@@ -70,12 +79,4 @@ where
             Err(error) => Some(Err(error)),
         }
     }
-}
-
-pub fn agent_config_builder() -> ::ureq::config::ConfigBuilder<::ureq::typestate::AgentScope> {
-    ::ureq::Agent::config_builder().http_status_as_error(false)
-}
-
-pub fn default_agent() -> ::ureq::Agent {
-    agent_config_builder().build().new_agent()
 }

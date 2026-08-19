@@ -1,3 +1,9 @@
+//! The `gitguardian_api` crate provides types for requests and models of GitGuardian's API.
+//! It is HTTP-client-agnostic. See the `gitguardian-client` crate for higher-level wrappers
+//! for individual HTTP frameworks like `ureq` and `reqwest`.
+//! Each route is represented by a struct that implements [`ApiCall`].
+//! Client implementations use [`ApiCall`] to build requests and parse responses.
+//! [`Paginated`] allows for iterating over paginated responses with standard iterators.
 pub mod api;
 pub mod constants;
 pub mod error;

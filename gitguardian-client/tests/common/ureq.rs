@@ -1,9 +1,10 @@
-use gitguardian_client::ureq::{Client, agent_config_builder};
+use gitguardian_client::ureq::Client;
 use gitguardian_mock::{MockServer, prefer};
 
 pub fn agent_preferring(status: u16) -> ::ureq::Agent {
     let value = ::ureq::http::HeaderValue::from_str(&prefer::code(status)).unwrap();
-    agent_config_builder()
+    ::ureq::Agent::config_builder()
+        .http_status_as_error(false)
         .middleware(
             move |mut request: ::ureq::http::Request<::ureq::SendBody>,
                   next: ::ureq::middleware::MiddlewareNext| {
