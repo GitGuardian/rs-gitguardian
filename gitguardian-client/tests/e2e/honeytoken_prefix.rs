@@ -1,14 +1,12 @@
 //! Tests of /v1/honeytokens/prefixes
 
-mod common;
-
-use common::fixture::check_honeytoken_prefixes;
+use crate::common::fixture::check_honeytoken_prefixes;
 use gitguardian_mock::MockServer;
 
 #[cfg(feature = "ureq")]
 mod ureq {
     use super::*;
-    use common::ureq::client;
+    use crate::common::ureq::client;
 
     #[test]
     /// GIVEN a list of HMSL hash prefixes
@@ -27,7 +25,7 @@ mod ureq {
 #[cfg(feature = "reqwest")]
 mod reqwest {
     use super::*;
-    use common::reqwest::client;
+    use crate::common::reqwest::client;
 
     #[tokio::test]
     /// GIVEN a list of HMSL hash prefixes

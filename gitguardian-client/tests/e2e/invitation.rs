@@ -1,15 +1,13 @@
 //! Tests of /v1/invitations
 
-mod common;
-
-use common::fixture::{create_invitation, delete_invitation, list_invitations};
+use crate::common::fixture::{create_invitation, delete_invitation, list_invitations};
 use gitguardian_api::models::invitation::access_level::InvitationAccessLevel;
 use gitguardian_mock::MockServer;
 
 #[cfg(feature = "ureq")]
 mod ureq {
     use super::*;
-    use common::ureq::client;
+    use crate::common::ureq::client;
 
     #[test]
     /// GIVEN an email address
@@ -59,7 +57,7 @@ mod ureq {
 #[cfg(feature = "reqwest")]
 mod reqwest {
     use super::*;
-    use common::reqwest::client;
+    use crate::common::reqwest::client;
 
     #[tokio::test]
     /// GIVEN an email address

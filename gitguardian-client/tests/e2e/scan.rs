@@ -1,16 +1,14 @@
 //! Tests of /v1/scan
 
-mod common;
-
-use common::assert_api_status;
-use common::fixture::scan;
+use crate::common::assert_api_status;
+use crate::common::fixture::scan;
 use gitguardian_mock::MockServer;
 use http::StatusCode;
 
 #[cfg(feature = "ureq")]
 mod ureq {
     use super::*;
-    use common::ureq::{client, client_preferring};
+    use crate::common::ureq::{client, client_preferring};
 
     #[test]
     /// GIVEN a document
@@ -44,7 +42,7 @@ mod ureq {
 #[cfg(feature = "reqwest")]
 mod reqwest {
     use super::*;
-    use common::reqwest::{client, client_preferring};
+    use crate::common::reqwest::{client, client_preferring};
 
     #[tokio::test]
     /// GIVEN a document

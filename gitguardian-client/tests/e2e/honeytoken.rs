@@ -1,15 +1,13 @@
 //! Tests of /v1/honeytokens
 
-mod common;
-
-use common::fixture::create_honeytoken;
+use crate::common::fixture::create_honeytoken;
 use gitguardian_api::models::honeytoken::{status::HoneytokenStatus, r#type::HoneytokenType};
 use gitguardian_mock::MockServer;
 
 #[cfg(feature = "ureq")]
 mod ureq {
     use super::*;
-    use common::ureq::client;
+    use crate::common::ureq::client;
 
     #[test]
     /// GIVEN a honeytoken name and type
@@ -32,7 +30,7 @@ mod ureq {
 #[cfg(feature = "reqwest")]
 mod reqwest {
     use super::*;
-    use common::reqwest::client;
+    use crate::common::reqwest::client;
 
     #[tokio::test]
     /// GIVEN a honeytoken name and type

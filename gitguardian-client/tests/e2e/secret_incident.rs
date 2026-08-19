@@ -1,14 +1,12 @@
 //! Tests of /v1/incidents/secrets
 
-mod common;
-
-use common::fixture::retrieve_secret_incident;
+use crate::common::fixture::retrieve_secret_incident;
 use gitguardian_mock::MockServer;
 
 #[cfg(feature = "ureq")]
 mod ureq {
     use super::*;
-    use common::ureq::client;
+    use crate::common::ureq::client;
 
     #[test]
     /// GIVEN an incident id and a number of occurrences to include
@@ -55,7 +53,7 @@ mod ureq {
 #[cfg(feature = "reqwest")]
 mod reqwest {
     use super::*;
-    use common::reqwest::client;
+    use crate::common::reqwest::client;
 
     #[tokio::test]
     /// GIVEN an incident id and a number of occurrences to include

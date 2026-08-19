@@ -1,14 +1,12 @@
 //! Tests of /v1/metadata
 
-mod common;
-
-use common::fixture::retrieve_metadata;
+use crate::common::fixture::retrieve_metadata;
 use gitguardian_mock::MockServer;
 
 #[cfg(feature = "ureq")]
 mod ureq {
     use super::*;
-    use common::ureq::client;
+    use crate::common::ureq::client;
 
     #[test]
     /// GIVEN a configured client
@@ -30,7 +28,7 @@ mod ureq {
 #[cfg(feature = "reqwest")]
 mod reqwest {
     use super::*;
-    use common::reqwest::client;
+    use crate::common::reqwest::client;
 
     #[tokio::test]
     /// GIVEN a configured client

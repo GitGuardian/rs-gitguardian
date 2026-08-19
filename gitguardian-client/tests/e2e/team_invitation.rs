@@ -1,14 +1,14 @@
 //! Tests of /v1/teams/{team_id}/team_invitations
 
-mod common;
-
-use common::fixture::{create_team_invitation, delete_team_invitation, list_team_invitations};
+use crate::common::fixture::{
+    create_team_invitation, delete_team_invitation, list_team_invitations,
+};
 use gitguardian_mock::MockServer;
 
 #[cfg(feature = "ureq")]
 mod ureq {
     use super::*;
-    use common::ureq::client;
+    use crate::common::ureq::client;
 
     #[test]
     /// GIVEN a team id and filter parameters
@@ -76,7 +76,7 @@ mod ureq {
 #[cfg(feature = "reqwest")]
 mod reqwest {
     use super::*;
-    use common::reqwest::client;
+    use crate::common::reqwest::client;
     use futures_util::{StreamExt, TryStreamExt};
 
     #[tokio::test]

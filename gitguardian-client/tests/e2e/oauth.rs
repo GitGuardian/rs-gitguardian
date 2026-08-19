@@ -1,14 +1,12 @@
 //! Tests of /v1/oauth/token
 
-mod common;
-
-use common::fixture::create_oauth_token;
+use crate::common::fixture::create_oauth_token;
 use gitguardian_mock::MockServer;
 
 #[cfg(feature = "ureq")]
 mod ureq {
     use super::*;
-    use common::ureq::client;
+    use crate::common::ureq::client;
 
     #[test]
     /// GIVEN an authorization code and a PKCE verifier
@@ -28,7 +26,7 @@ mod ureq {
 #[cfg(feature = "reqwest")]
 mod reqwest {
     use super::*;
-    use common::reqwest::client;
+    use crate::common::reqwest::client;
 
     #[tokio::test]
     /// GIVEN an authorization code and a PKCE verifier

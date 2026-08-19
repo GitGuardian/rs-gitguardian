@@ -1,16 +1,14 @@
 //! Tests of /v1/teams/{team_id}/sources
 
-mod common;
-
-use common::assert_api_status;
-use common::fixture::{list_team_sources, update_team_sources};
+use crate::common::assert_api_status;
+use crate::common::fixture::{list_team_sources, update_team_sources};
 use gitguardian_mock::MockServer;
 use http::StatusCode;
 
 #[cfg(feature = "ureq")]
 mod ureq {
     use super::*;
-    use common::ureq::{client, client_preferring};
+    use crate::common::ureq::{client, client_preferring};
 
     #[test]
     /// GIVEN sources to add to a team perimeter
@@ -53,7 +51,7 @@ mod ureq {
 #[cfg(feature = "reqwest")]
 mod reqwest {
     use super::*;
-    use common::reqwest::{client, client_preferring};
+    use crate::common::reqwest::{client, client_preferring};
 
     #[tokio::test]
     /// GIVEN sources to add to a team perimeter

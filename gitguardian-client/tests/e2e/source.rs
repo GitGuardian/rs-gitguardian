@@ -1,14 +1,12 @@
 //! Tests of /v1/sources
 
-mod common;
-
-use common::fixture::list_sources;
+use crate::common::fixture::list_sources;
 use gitguardian_mock::MockServer;
 
 #[cfg(feature = "ureq")]
 mod ureq {
     use super::*;
-    use common::ureq::client;
+    use crate::common::ureq::client;
 
     #[test]
     /// GIVEN pagination and filter parameters
@@ -44,7 +42,7 @@ mod ureq {
 #[cfg(feature = "reqwest")]
 mod reqwest {
     use super::*;
-    use common::reqwest::client;
+    use crate::common::reqwest::client;
     use futures_util::{StreamExt, TryStreamExt};
 
     #[tokio::test]

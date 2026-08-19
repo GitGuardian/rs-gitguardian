@@ -1,16 +1,14 @@
 //! Tests of caller-supplied headers
 
-mod common;
-
-use common::assert_api_status;
-use common::fixture::retrieve_quotas;
+use crate::common::assert_api_status;
+use crate::common::fixture::retrieve_quotas;
 use gitguardian_api::ApiConfig;
 use gitguardian_api::http::HeaderValue;
 use gitguardian_mock::{MockServer, prefer};
 use http::StatusCode;
 
 fn config_preferring(server: &MockServer, status: u16) -> ApiConfig {
-    let mut config = common::config(server);
+    let mut config = crate::common::config(server);
     config.headers_mut().insert(
         prefer::HEADER,
         HeaderValue::from_str(&prefer::code(status)).unwrap(),
@@ -38,7 +36,7 @@ mod ureq {
     fn sends_no_headers_of_an_untouched_config() {
         let server = MockServer::shared();
 
-        Client::new(common::config(server))
+        Client::new(crate::common::config(server))
             .send(&retrieve_quotas())
             .expect("quota retrieval should succeed");
     }
@@ -65,7 +63,7 @@ mod reqwest {
     async fn sends_no_headers_of_an_untouched_config() {
         let server = MockServer::shared();
 
-        Client::new(common::config(server))
+        Client::new(crate::common::config(server))
             .send(&retrieve_quotas())
             .await
             .expect("quota retrieval should succeed");

@@ -1,8 +1,6 @@
 //! Tests of /v1/honeytokens/endpoint-deployments
 
-mod common;
-
-use common::fixture::{
+use crate::common::fixture::{
     confirm_endpoint_deployment, create_endpoint_deployment, list_endpoint_deployments,
 };
 use gitguardian_mock::MockServer;
@@ -10,7 +8,7 @@ use gitguardian_mock::MockServer;
 #[cfg(feature = "ureq")]
 mod ureq {
     use super::*;
-    use common::ureq::client;
+    use crate::common::ureq::client;
 
     #[test]
     /// GIVEN a machine and an OS user
@@ -57,7 +55,7 @@ mod ureq {
 #[cfg(feature = "reqwest")]
 mod reqwest {
     use super::*;
-    use common::reqwest::client;
+    use crate::common::reqwest::client;
 
     #[tokio::test]
     /// GIVEN a machine and an OS user

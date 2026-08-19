@@ -1,14 +1,12 @@
 //! Tests of /v1/members
 
-mod common;
-
-use common::fixture::{delete_member, list_members, retrieve_member, update_member};
+use crate::common::fixture::{delete_member, list_members, retrieve_member, update_member};
 use gitguardian_mock::MockServer;
 
 #[cfg(feature = "ureq")]
 mod ureq {
     use super::*;
-    use common::ureq::client;
+    use crate::common::ureq::client;
 
     #[test]
     /// GIVEN pagination and filter parameters
@@ -85,7 +83,7 @@ mod ureq {
 #[cfg(feature = "reqwest")]
 mod reqwest {
     use super::*;
-    use common::reqwest::client;
+    use crate::common::reqwest::client;
     use futures_util::{StreamExt, TryStreamExt};
 
     #[tokio::test]

@@ -1,25 +1,23 @@
-//! Tests of /v1/scan/create-incidents
+//! Tests of /v1/multiscan
 
-mod common;
-
-use common::fixture::scan_create_incidents;
+use crate::common::fixture::multiscan;
 use gitguardian_mock::MockServer;
 
 #[cfg(feature = "ureq")]
 mod ureq {
     use super::*;
-    use common::ureq::client;
+    use crate::common::ureq::client;
 
     #[test]
-    /// GIVEN a document and a custom source
-    /// WHEN scanning it to create incidents on that source
+    /// GIVEN several documents
+    /// WHEN scanning them
     /// THEN one scan result is returned per document
-    fn scans_documents_and_creates_incidents() {
+    fn scans_documents() {
         let server = MockServer::shared();
 
         let results = client(server)
-            .send(&scan_create_incidents())
-            .expect("scan and incident creation should succeed");
+            .send(&multiscan())
+            .expect("multiscan should succeed");
 
         assert!(!results.is_empty());
         for result in &results {
@@ -35,19 +33,19 @@ mod ureq {
 #[cfg(feature = "reqwest")]
 mod reqwest {
     use super::*;
-    use common::reqwest::client;
+    use crate::common::reqwest::client;
 
     #[tokio::test]
-    /// GIVEN a document and a custom source
-    /// WHEN scanning it to create incidents on that source
+    /// GIVEN several documents
+    /// WHEN scanning them
     /// THEN one scan result is returned per document
-    async fn scans_documents_and_creates_incidents() {
+    async fn scans_documents() {
         let server = MockServer::shared();
 
         let results = client(server)
-            .send(&scan_create_incidents())
+            .send(&multiscan())
             .await
-            .expect("scan and incident creation should succeed");
+            .expect("multiscan should succeed");
 
         assert!(!results.is_empty());
         for result in &results {
