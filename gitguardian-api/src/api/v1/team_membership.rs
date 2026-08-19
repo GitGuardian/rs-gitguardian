@@ -85,7 +85,7 @@ impl ApiCall for ListTeamMemberships {
                 page: &self.page,
                 is_team_leader: self.is_team_leader,
                 team_permission: self.team_permission,
-                incident_permission: self.incident_permission,
+                incident_permission: self.incident_permission.clone(),
                 member_id: self.member_id,
             },
         )?;
@@ -176,7 +176,7 @@ impl ApiCall for CreateTeamMembership {
                 member_id: self.member_id,
                 is_team_leader: self.is_team_leader,
                 team_permission: self.team_permission,
-                incident_permission: self.incident_permission,
+                incident_permission: self.incident_permission.clone(),
             },
         )
     }

@@ -1,7 +1,7 @@
 use serde::Deserialize;
 
 /// Tag set on a secret incident or one of its occurrences.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 #[non_exhaustive]
 pub enum IncidentTag {
@@ -20,4 +20,6 @@ pub enum IncidentTag {
     FalsePositive,
     Vaulted,
     RevocableByGg,
+    #[serde(untagged)]
+    Other(String),
 }

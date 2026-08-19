@@ -10,11 +10,13 @@ pub struct DestinationTicket {
 }
 
 /// External service a destination ticket lives on.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "snake_case")]
 #[non_exhaustive]
 pub enum DestinationTicketType {
     JiraCloud,
     JiraDataCenter,
     Servicenow,
+    #[serde(untagged)]
+    Other(String),
 }

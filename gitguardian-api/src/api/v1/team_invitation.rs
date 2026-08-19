@@ -86,7 +86,7 @@ impl ApiCall for ListTeamInvitations {
                 invitation_id: self.invitation_id,
                 is_team_leader: self.is_team_leader,
                 team_permission: self.team_permission,
-                incident_permission: self.incident_permission,
+                incident_permission: self.incident_permission.clone(),
             },
         )?;
         Ok(config.request(Method::GET, &url).body(Bytes::new())?)
@@ -160,7 +160,7 @@ impl ApiCall for CreateTeamInvitation {
                 invitation_id: self.invitation_id,
                 is_team_leader: self.is_team_leader,
                 team_permission: self.team_permission,
-                incident_permission: self.incident_permission,
+                incident_permission: self.incident_permission.clone(),
             },
         )
     }

@@ -107,8 +107,8 @@ impl ApiCall for ListSources {
             &ListSourcesQueryParam {
                 page: &self.page,
                 search: self.search.as_deref(),
-                last_scan_status: self.last_scan_status,
-                health: self.health,
+                last_scan_status: self.last_scan_status.clone(),
+                health: self.health.clone(),
                 source_type: self.source_type,
                 ordering: self.ordering,
                 visibility: self.visibility,

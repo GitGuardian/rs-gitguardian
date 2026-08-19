@@ -43,29 +43,35 @@ pub struct OccurrenceMatch {
 }
 
 /// How an occurrence was detected.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "snake_case")]
 #[non_exhaustive]
 pub enum OccurrenceKind {
     Realtime,
     Historical,
+    #[serde(untagged)]
+    Other(String),
 }
 
 /// Whether the secret is still present in the occurrence.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "snake_case")]
 #[non_exhaustive]
 pub enum OccurrencePresence {
     Present,
     Removed,
+    #[serde(untagged)]
+    Other(String),
 }
 
 /// Kind of change the occurrence was found in.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "snake_case")]
 #[non_exhaustive]
 pub enum ChangeType {
     Addition,
     Deletion,
     Context,
+    #[serde(untagged)]
+    Other(String),
 }

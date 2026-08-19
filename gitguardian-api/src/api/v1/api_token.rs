@@ -121,7 +121,7 @@ impl ApiCall for ListApiTokens {
                 status: self.status,
                 member_id: self.member_id,
                 creator_id: self.creator_id,
-                scopes: self.scopes,
+                scopes: self.scopes.clone(),
                 search: self.search.as_deref(),
                 ordering: self.ordering,
             },

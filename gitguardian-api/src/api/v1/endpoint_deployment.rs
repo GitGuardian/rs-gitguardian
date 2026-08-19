@@ -103,7 +103,7 @@ impl ApiCall for CreateEndpointDeployment {
             config.request(Method::POST, &url),
             &CreateEndpointDeploymentBody {
                 machine_info: &self.machine_info,
-                method: self.method,
+                method: self.method.clone(),
                 config: self.config.as_ref(),
                 description: self.description.as_deref(),
                 custom_tags: self
@@ -205,7 +205,7 @@ impl ApiCall for ConfirmEndpointDeployment {
         json_body(
             config.request(Method::PATCH, &url),
             &ConfirmEndpointDeploymentBody {
-                status: self.status,
+                status: self.status.clone(),
             },
         )
     }

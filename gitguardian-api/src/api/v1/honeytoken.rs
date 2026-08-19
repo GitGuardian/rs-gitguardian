@@ -55,7 +55,7 @@ impl ApiCall for CreateHoneytoken {
             config.request(Method::POST, &url),
             &CreateHoneytokenBody {
                 name: &self.name,
-                honeytoken_type: self.honeytoken_type,
+                honeytoken_type: self.honeytoken_type.clone(),
                 description: self.description.as_deref(),
             },
         )

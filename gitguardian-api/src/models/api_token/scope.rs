@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// Scope granted to an API token.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
 #[non_exhaustive]
 pub enum ApiTokenScope {
     #[serde(rename = "scan")]
@@ -48,4 +48,6 @@ pub enum ApiTokenScope {
     EndpointsSend,
     #[serde(rename = "ai-discover:send")]
     AiDiscoverSend,
+    #[serde(untagged)]
+    Other(String),
 }

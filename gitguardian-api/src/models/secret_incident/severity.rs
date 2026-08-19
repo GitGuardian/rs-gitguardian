@@ -1,7 +1,7 @@
 use serde::Deserialize;
 
 /// Severity of a secret incident.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "snake_case")]
 #[non_exhaustive]
 pub enum Severity {
@@ -11,4 +11,6 @@ pub enum Severity {
     Low,
     Info,
     Unknown,
+    #[serde(untagged)]
+    Other(String),
 }

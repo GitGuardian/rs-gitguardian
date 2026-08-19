@@ -69,7 +69,7 @@ impl ApiCall for CreateHoneytokenWithContext {
             config.request(Method::POST, &url),
             &CreateHoneytokenWithContextBody {
                 name: &self.name,
-                honeytoken_type: self.honeytoken_type,
+                honeytoken_type: self.honeytoken_type.clone(),
                 description: self.description.as_deref(),
                 filename: self.filename.as_deref(),
                 language: self.language.as_deref(),
