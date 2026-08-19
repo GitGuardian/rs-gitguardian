@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [features]
-default = ["ureq", "reqwest"]
+default = ["ureq"]
 reqwest = ["dep:reqwest", "dep:futures-core"]
 ureq = ["dep:ureq"]
 
@@ -14,8 +14,8 @@ bytes = "1"
 futures-core = { version = "0.3", optional = true }
 http = "1"
 thiserror = "2"
-reqwest = { version = "0.12", default-features = false, features = [
-    "rustls-tls",
+reqwest = { version = "0.13", default-features = false, features = [
+    "rustls",
 ], optional = true }
 ureq = { version = "3", optional = true }
 
