@@ -19,6 +19,16 @@ pub fn json_body<T: Serialize>(
         .body(Bytes::from(body))?)
 }
 
+pub fn form_body<T: Serialize>(
+    builder: http::request::Builder,
+    value: &T,
+) -> Result<Request<Bytes>, BuildError> {
+    let body = serde_urlencoded::to_string(value)?;
+    Ok(builder
+        .header(CONTENT_TYPE, "application/x-www-form-urlencoded")
+        .body(Bytes::from(body))?)
+}
+
 fn expect_status(response: &Response<Bytes>, expected: StatusCode) -> Result<(), ApiError> {
     let status = response.status();
     if status == expected {

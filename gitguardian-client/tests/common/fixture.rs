@@ -1,6 +1,10 @@
 use gitguardian_api::api::v1::api_token::{RetrieveApiToken, RetrieveCurrentApiToken};
+use gitguardian_api::api::v1::endpoint_deployment::{
+    ConfirmEndpointDeployment, CreateEndpointDeployment, ListEndpointDeployments, MachineInfo,
+};
 use gitguardian_api::api::v1::health::CheckHealth;
 use gitguardian_api::api::v1::honeytoken::CreateHoneytoken;
+use gitguardian_api::api::v1::honeytoken_prefix::CheckHoneytokenPrefixes;
 use gitguardian_api::api::v1::honeytoken_with_context::CreateHoneytokenWithContext;
 use gitguardian_api::api::v1::invitation::ListInvitations;
 use gitguardian_api::api::v1::invitation::{CreateInvitation, DeleteInvitation};
@@ -8,6 +12,7 @@ use gitguardian_api::api::v1::jwt::CreateJwt;
 use gitguardian_api::api::v1::member::{DeleteMember, ListMembers, RetrieveMember, UpdateMember};
 use gitguardian_api::api::v1::metadata::RetrieveMetadata;
 use gitguardian_api::api::v1::multiscan::MultiScan;
+use gitguardian_api::api::v1::oauth::CreateOAuthToken;
 use gitguardian_api::api::v1::quota::RetrieveQuotas;
 use gitguardian_api::api::v1::scan::Scan;
 use gitguardian_api::api::v1::scan_create_incidents::ScanCreateIncidents;
@@ -23,6 +28,7 @@ use gitguardian_api::api::v1::team_membership::{
 use gitguardian_api::api::v1::team_source::{ListTeamSources, UpdateTeamSources};
 use gitguardian_api::models::document::Document;
 use gitguardian_api::models::document_location::DocumentLocation;
+use gitguardian_api::models::endpoint_deployment::status::DeploymentStatus;
 use gitguardian_api::models::honeytoken::r#type::HoneytokenType;
 use gitguardian_api::models::invitation::ordering::InvitationOrdering;
 use gitguardian_api::models::member::access_level::AccessLevel;
@@ -264,4 +270,46 @@ pub fn retrieve_secret_incident() -> RetrieveSecretIncident {
 
 pub fn retrieve_metadata() -> RetrieveMetadata {
     RetrieveMetadata
+}
+
+pub const MACHINE_ID: &str = "7e3a9d7f-8a5e-4e23-9c2f-eb1d6f64fa55";
+
+pub const USERNAME: &str = "alice";
+
+pub const DEPLOYMENT_ID: &str = "800172b9-5002-43c6-bf5b-7112afc59721";
+
+pub fn create_oauth_token() -> CreateOAuthToken {
+    let mut call = CreateOAuthToken::new(
+        "4/0Adeu5BWqv9oS",
+        "https://app.example.com/callback",
+        "gg_client_AbCdEf123456",
+        "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk",
+    );
+    call.name = Some("My MCP client".to_owned());
+    call.lifetime = Some(30);
+    call
+}
+
+pub fn check_honeytoken_prefixes() -> CheckHoneytokenPrefixes {
+    ["abcde".to_owned(), "12345".to_owned()]
+        .into_iter()
+        .collect()
+}
+
+pub fn machine_info() -> MachineInfo {
+    MachineInfo::new(MACHINE_ID, USERNAME, "alice-laptop")
+}
+
+pub fn create_endpoint_deployment() -> CreateEndpointDeployment {
+    let mut call = CreateEndpointDeployment::new(machine_info());
+    call.description = Some("Deployed by ggshield on the CI runner".to_owned());
+    call
+}
+
+pub fn list_endpoint_deployments() -> ListEndpointDeployments {
+    ListEndpointDeployments::new(MACHINE_ID, USERNAME)
+}
+
+pub fn confirm_endpoint_deployment() -> ConfirmEndpointDeployment {
+    ConfirmEndpointDeployment::new(DEPLOYMENT_ID, DeploymentStatus::Planted)
 }

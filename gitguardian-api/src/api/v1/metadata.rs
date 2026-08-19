@@ -10,7 +10,7 @@ use crate::{
 
 /// Get public Metadata.
 ///
-/// `GET /v1/metadata`, answering `200`.
+/// `GET /v1/metadata`.
 #[derive(Clone, Debug, Default)]
 pub struct RetrieveMetadata;
 

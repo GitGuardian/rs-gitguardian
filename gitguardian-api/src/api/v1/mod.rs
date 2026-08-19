@@ -1,12 +1,15 @@
 pub mod api_token;
+pub mod endpoint_deployment;
 pub mod health;
 pub mod honeytoken;
+pub mod honeytoken_prefix;
 pub mod honeytoken_with_context;
 pub mod invitation;
 pub mod jwt;
 pub mod member;
 pub mod metadata;
 pub mod multiscan;
+pub mod oauth;
 pub mod quota;
 pub mod scan;
 pub mod scan_create_incidents;
