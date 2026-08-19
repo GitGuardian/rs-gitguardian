@@ -1,4 +1,7 @@
-use gitguardian_api::api::v1::api_token::{RetrieveApiToken, RetrieveCurrentApiToken};
+use gitguardian_api::api::v1::api_token::{
+    CreateApiToken, ListApiTokens, RetrieveApiToken, RetrieveCurrentApiToken, RevokeApiToken,
+    RevokeCurrentApiToken,
+};
 use gitguardian_api::api::v1::endpoint_deployment::{
     ConfirmEndpointDeployment, CreateEndpointDeployment, ListEndpointDeployments, MachineInfo,
 };
@@ -26,6 +29,10 @@ use gitguardian_api::api::v1::team_membership::{
     CreateTeamMembership, DeleteTeamMembership, ListTeamMemberships,
 };
 use gitguardian_api::api::v1::team_source::{ListTeamSources, UpdateTeamSources};
+use gitguardian_api::models::api_token::ordering::ApiTokenOrdering;
+use gitguardian_api::models::api_token::scope::ApiTokenScope;
+use gitguardian_api::models::api_token::status::ApiTokenStatus;
+use gitguardian_api::models::api_token::r#type::ApiTokenType;
 use gitguardian_api::models::document::Document;
 use gitguardian_api::models::document_location::DocumentLocation;
 use gitguardian_api::models::endpoint_deployment::status::DeploymentStatus;
@@ -312,4 +319,34 @@ pub fn list_endpoint_deployments() -> ListEndpointDeployments {
 
 pub fn confirm_endpoint_deployment() -> ConfirmEndpointDeployment {
     ConfirmEndpointDeployment::new(DEPLOYMENT_ID, DeploymentStatus::Planted)
+}
+
+pub fn list_api_tokens() -> ListApiTokens {
+    ListApiTokens {
+        page: Pagination {
+            per_page: Some(1),
+            ..Default::default()
+        },
+        status: Some(ApiTokenStatus::Active),
+        scopes: Some(ApiTokenScope::Scan),
+        ordering: Some(ApiTokenOrdering::CreatedAtDesc),
+        ..Default::default()
+    }
+}
+
+pub fn create_api_token() -> CreateApiToken {
+    CreateApiToken::new(
+        "myTokenName",
+        ApiTokenType::PersonalAccessToken,
+        vec![ApiTokenScope::Scan, ApiTokenScope::IncidentsRead],
+        30,
+    )
+}
+
+pub fn revoke_current_api_token() -> RevokeCurrentApiToken {
+    RevokeCurrentApiToken
+}
+
+pub fn revoke_api_token() -> RevokeApiToken {
+    RevokeApiToken::new(TOKEN_ID)
 }

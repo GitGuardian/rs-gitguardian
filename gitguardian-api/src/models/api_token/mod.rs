@@ -6,6 +6,7 @@ use crate::models::api_token::{
     scope::ApiTokenScope, status::ApiTokenStatus, r#type::ApiTokenType,
 };
 
+pub mod ordering;
 pub mod scope;
 pub mod status;
 pub mod r#type;
@@ -17,7 +18,7 @@ pub struct ApiToken {
     pub id: Uuid,
     /// Name of API token.
     pub name: String,
-    /// Id of the workspace this token belongs to.
+    /// Workspace id.
     pub workspace_id: u32,
     #[serde(rename = "type")]
     pub token_type: ApiTokenType,
@@ -35,4 +36,16 @@ pub struct ApiToken {
     pub creator_id: Option<u32>,
     #[serde(default)]
     pub scopes: Vec<ApiTokenScope>,
+}
+
+/// Details of a freshly created API Token, along with its clear text key.
+#[derive(Clone, Debug, Deserialize)]
+pub struct CreatedApiToken {
+    #[serde(flatten)]
+    pub token: ApiToken,
+    /// The clear text key of the new token. Use it in the `Authorization: Token <key>`
+    /// header for subsequent calls to the GitGuardian API. It is returned by this
+    /// endpoint only and cannot be retrieved afterwards, so store it before discarding
+    /// the response.
+    pub key: String,
 }
