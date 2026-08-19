@@ -16,7 +16,7 @@ pub use http;
 pub use uuid;
 
 use bytes::Bytes;
-use http::header::{AUTHORIZATION, HeaderValue};
+use http::header::{AUTHORIZATION, HeaderMap, HeaderValue};
 use http::{Method, Request, Response};
 use url::Url;
 
@@ -44,6 +44,7 @@ pub trait Paginated: ApiCall {
 pub struct ApiConfig {
     base: Url,
     authorization: HeaderValue,
+    headers: HeaderMap,
 }
 
 impl ApiConfig {
@@ -58,14 +59,27 @@ impl ApiConfig {
         Ok(Self {
             base: Url::parse(base_uri)?,
             authorization,
+            headers: HeaderMap::new(),
         })
     }
 
+    pub fn headers(&self) -> &HeaderMap {
+        &self.headers
+    }
+
+    pub fn headers_mut(&mut self) -> &mut HeaderMap {
+        &mut self.headers
+    }
+
     pub fn request(&self, method: Method, url: &Url) -> http::request::Builder {
-        Request::builder()
-            .method(method)
-            .uri(url.as_str())
-            .header(AUTHORIZATION, self.authorization.clone())
+        let mut builder = Request::builder().method(method).uri(url.as_str());
+        if let Some(headers) = builder.headers_mut() {
+            for (name, value) in &self.headers {
+                headers.append(name, value.clone());
+            }
+            headers.insert(AUTHORIZATION, self.authorization.clone());
+        }
+        builder
     }
 
     pub fn endpoint(&self, path: &str) -> Result<Url, BuildError> {
