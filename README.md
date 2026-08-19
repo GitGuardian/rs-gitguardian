@@ -17,7 +17,7 @@ The GitGuardian API puts at your fingertips the power to detect more than 600 ty
 You can check API details [here](https://api.gitguardian.com/docs)
 with all the response codes and expected structures on each method.
 
-## Requirements
+## MSRV
 
 Rust 1.88+
 
@@ -106,3 +106,7 @@ let client = Client::new(ApiConfig::new(&api_key)?);
 let quotas = client.send(&RetrieveQuotas).await?;
 println!("{} API calls remaining", quotas.content.remaining);
 ```
+
+## Architecture
+
+This project exposes two crates in order to decouple the API representation from the HTTP client. `gitguardian-api` provides strong typing around GitGuardian’s API, as well as a set of models that maps to GitGuardian’s types. `gitguardian-client` exposes client wrappers for `ureq` agents and `reqwest` clients. The `reqwest` client is feature-gated. The `reqwest` client is also reasonably generic so that it works with reqwest middleware such as `http-cache`.
