@@ -6,6 +6,7 @@ use gitguardian_api::api::v1::invitation::ListInvitations;
 use gitguardian_api::api::v1::invitation::{CreateInvitation, DeleteInvitation};
 use gitguardian_api::api::v1::jwt::CreateJwt;
 use gitguardian_api::api::v1::member::{DeleteMember, ListMembers, RetrieveMember, UpdateMember};
+use gitguardian_api::api::v1::metadata::RetrieveMetadata;
 use gitguardian_api::api::v1::multiscan::MultiScan;
 use gitguardian_api::api::v1::quota::RetrieveQuotas;
 use gitguardian_api::api::v1::scan::Scan;
@@ -259,4 +260,8 @@ pub fn retrieve_secret_incident() -> RetrieveSecretIncident {
     let mut call = RetrieveSecretIncident::new(INCIDENT_ID);
     call.with_occurrences = Some(1);
     call
+}
+
+pub fn retrieve_metadata() -> RetrieveMetadata {
+    RetrieveMetadata
 }

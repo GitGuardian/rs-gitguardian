@@ -14,6 +14,7 @@ pub mod policy_break;
 pub mod quota;
 pub mod scan_result;
 pub mod secret_incident;
+pub mod server_metadata;
 pub mod source;
 pub mod team;
 pub mod validity;

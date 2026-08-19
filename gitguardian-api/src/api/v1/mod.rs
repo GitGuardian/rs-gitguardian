@@ -5,6 +5,7 @@ pub mod honeytoken_with_context;
 pub mod invitation;
 pub mod jwt;
 pub mod member;
+pub mod metadata;
 pub mod multiscan;
 pub mod quota;
 pub mod scan;

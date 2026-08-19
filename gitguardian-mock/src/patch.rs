@@ -7,6 +7,7 @@ pub fn patch(spec: &mut Value) {
     patch_honeytoken_context_filename(spec);
     patch_scan_create_incidents_result(spec);
     patch_validity_examples(spec);
+    patch_metadata_path(spec);
 }
 
 fn patch_validity_examples(node: &mut Value) {
@@ -108,4 +109,61 @@ fn patch_nullable_enums(node: &mut Value) {
         Value::Array(values) => values.iter_mut().for_each(patch_nullable_enums),
         _ => {}
     }
+}
+
+fn patch_metadata_path(spec: &mut Value) {
+    let Some(paths) = spec.get_mut("paths").and_then(Value::as_object_mut) else {
+        return;
+    };
+    paths.insert(
+        "/v1/metadata".to_owned(),
+        json!({
+            "get": {
+                "summary": "Get public Metadata",
+                "responses": {
+                    "200": {
+                        "description": "Get public Metadata",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "version",
+                                        "preferences",
+                                        "secret_scan_preferences",
+                                        "remediation_messages"
+                                    ],
+                                    "properties": {
+                                        "version": {"type": "string", "example": "1.0.0"},
+                                        "preferences": {
+                                            "type": "object",
+                                            "additionalProperties": true,
+                                            "example": {"general__maximum_payload_size": 26214400}
+                                        },
+                                        "secret_scan_preferences": {
+                                            "type": "object",
+                                            "required": ["maximum_documents_per_scan", "maximum_document_size"],
+                                            "properties": {
+                                                "maximum_documents_per_scan": {"type": "integer", "example": 20},
+                                                "maximum_document_size": {"type": "integer", "example": 1048576}
+                                            }
+                                        },
+                                        "remediation_messages": {
+                                            "type": "object",
+                                            "additionalProperties": {"type": "string"},
+                                            "example": {
+                                                "pre_commit": "Docs: https://docs.gitguardian.com",
+                                                "pre_push": "Docs: https://docs.gitguardian.com",
+                                                "pre_receive": "Docs: https://docs.gitguardian.com"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }),
+    );
 }
