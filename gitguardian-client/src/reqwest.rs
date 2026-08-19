@@ -5,34 +5,48 @@ use std::task::{Context, Poll};
 use futures_core::Stream;
 use gitguardian_api::{ApiCall, ApiConfig, Paginated, models::page::Page};
 use http::Response;
+use tower_service::Service;
 
 use crate::error::Error;
 
 #[derive(Clone, Debug)]
-pub struct Client {
-    http: ::reqwest::Client,
+pub struct Client<S = ::reqwest::Client> {
+    http: S,
     config: ApiConfig,
 }
 
-impl Client {
+impl Client<::reqwest::Client> {
     pub fn new(config: ApiConfig) -> Self {
-        Self::with_http(config, ::reqwest::Client::new())
+        Self::with_http_client(config, ::reqwest::Client::new())
     }
+}
 
-    pub fn with_http(config: ApiConfig, http: ::reqwest::Client) -> Self {
+impl<S> Client<S> {
+    pub fn with_http_client(config: ApiConfig, http: S) -> Self {
         Self { http, config }
     }
 
     pub fn config(&self) -> &ApiConfig {
         &self.config
     }
+}
 
+impl<S> Client<S>
+where
+    for<'a> &'a S: Service<::reqwest::Request, Response = ::reqwest::Response>,
+    for<'a> <&'a S as Service<::reqwest::Request>>::Error:
+        std::error::Error + Send + Sync + 'static,
+{
     pub async fn send<C: ApiCall>(&self, call: &C) -> Result<C::Output, Error> {
         let request = call.build(&self.config)?;
-        let response = self
-            .http
-            .execute(::reqwest::Request::try_from(request)?)
-            .await?;
+        let mut http = &self.http;
+        std::future::poll_fn(|cx| http.poll_ready(cx))
+            .await
+            .map_err(|error| Error::Transport(Box::new(error)))?;
+        let response = http
+            .call(::reqwest::Request::try_from(request)?)
+            .await
+            .map_err(|error| Error::Transport(Box::new(error)))?;
 
         let status = response.status();
         let headers = response.headers().clone();
@@ -43,7 +57,7 @@ impl Client {
         Ok(call.parse(out)?)
     }
 
-    pub fn paginate<T, C>(&self, call: C) -> Pages<'_, T, C>
+    pub fn paginate<T, C>(&self, call: C) -> Pages<'_, T, C, S>
     where
         C: Paginated<Output = Page<T>> + Send + Sync + Unpin + 'static,
         T: Send + 'static,
@@ -63,13 +77,18 @@ enum State<'a, T, C> {
     Done,
 }
 
-pub struct Pages<'a, T, C> {
-    client: &'a Client,
+pub struct Pages<'a, T, C, S = ::reqwest::Client> {
+    client: &'a Client<S>,
     state: State<'a, T, C>,
 }
 
-impl<T, C> Stream for Pages<'_, T, C>
+impl<T, C, S> Stream for Pages<'_, T, C, S>
 where
+    S: Send + Sync,
+    for<'a> &'a S: Service<::reqwest::Request, Response = ::reqwest::Response>,
+    for<'a> <&'a S as Service<::reqwest::Request>>::Error:
+        std::error::Error + Send + Sync + 'static,
+    for<'a> <&'a S as Service<::reqwest::Request>>::Future: Send,
     C: Paginated<Output = Page<T>> + Send + Sync + Unpin + 'static,
     T: Send + 'static,
 {

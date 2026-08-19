@@ -18,5 +18,5 @@ pub fn client(server: &MockServer) -> Client {
 }
 
 pub fn client_preferring(server: &MockServer, status: u16) -> Client {
-    Client::with_http(super::config(server), http_preferring(status))
+    Client::with_http_client(super::config(server), http_preferring(status))
 }

@@ -9,6 +9,9 @@ pub enum Error {
     #[cfg(feature = "reqwest")]
     #[error(transparent)]
     Reqwest(#[from] ::reqwest::Error),
+    #[cfg(feature = "reqwest")]
+    #[error(transparent)]
+    Transport(Box<dyn std::error::Error + Send + Sync>),
     #[cfg(feature = "ureq")]
     #[error(transparent)]
     Ureq(#[from] ::ureq::Error),

@@ -307,6 +307,7 @@ dependencies = [
  "reqwest",
  "thiserror",
  "tokio",
+ "tower-service",
  "ureq",
 ]
 
