@@ -2,6 +2,7 @@ use gitguardian_api::api::v1::api_token::{
     CreateApiToken, ListApiTokens, RetrieveApiToken, RetrieveCurrentApiToken, RevokeApiToken,
     RevokeCurrentApiToken,
 };
+use gitguardian_api::api::v1::custom_host::ListDetectorCustomHosts;
 use gitguardian_api::api::v1::endpoint_deployment::{
     ConfirmEndpointDeployment, CreateEndpointDeployment, ListEndpointDeployments, MachineInfo,
 };
@@ -277,6 +278,10 @@ pub fn retrieve_secret_incident() -> RetrieveSecretIncident {
 
 pub fn retrieve_metadata() -> RetrieveMetadata {
     RetrieveMetadata
+}
+
+pub fn list_detector_custom_hosts() -> ListDetectorCustomHosts {
+    ListDetectorCustomHosts
 }
 
 pub const MACHINE_ID: &str = "7e3a9d7f-8a5e-4e23-9c2f-eb1d6f64fa55";

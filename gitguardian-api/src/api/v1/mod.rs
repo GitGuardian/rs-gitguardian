@@ -1,4 +1,5 @@
 pub mod api_token;
+pub mod custom_host;
 pub mod endpoint_deployment;
 pub mod health;
 pub mod honeytoken;

@@ -1,4 +1,5 @@
 pub mod api_token;
+pub mod custom_host;
 pub mod custom_tag;
 pub mod document;
 pub mod document_location;
