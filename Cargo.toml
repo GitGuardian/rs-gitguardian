@@ -9,3 +9,6 @@ rust-version = "1.88"
 license = "MIT"
 repository = "https://github.com/GitGuardian/rs-gitguardian"
 homepage = "https://www.gitguardian.com"
+
+[workspace.dependencies]
+gitguardian-api = { path = "gitguardian-api", version = "=0.1.0" }

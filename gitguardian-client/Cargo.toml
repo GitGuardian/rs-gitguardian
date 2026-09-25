@@ -20,7 +20,7 @@ reqwest = ["dep:reqwest", "dep:futures-core", "dep:tower-service"]
 ureq = ["dep:ureq"]
 
 [dependencies]
-gitguardian-api = { path = "../gitguardian-api", version = "0.1.0" }
+gitguardian-api.workspace = true
 bytes = "1"
 futures-core = { version = "0.3", optional = true }
 http = "1"
