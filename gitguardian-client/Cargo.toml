@@ -1,7 +1,18 @@
 [package]
 name = "gitguardian-client"
-version = "0.1.0"
-edition = "2024"
+description = "GitGuardian API client with ureq and reqwest backends"
+readme = "../README.md"
+keywords = ["gitguardian", "secrets", "security", "api", "client"]
+categories = ["api-bindings", "web-programming::http-client"]
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+
+[package.metadata.docs.rs]
+all-features = true
 
 [features]
 default = ["ureq"]
@@ -9,7 +20,7 @@ reqwest = ["dep:reqwest", "dep:futures-core", "dep:tower-service"]
 ureq = ["dep:ureq"]
 
 [dependencies]
-gitguardian-api = { path = "../gitguardian-api" }
+gitguardian-api.workspace = true
 bytes = "1"
 futures-core = { version = "0.3", optional = true }
 http = "1"

@@ -1,3 +1,14 @@
 [workspace]
 resolver = "3"
 members = ["gitguardian-api", "gitguardian-client", "gitguardian-mock"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+license = "MIT"
+repository = "https://github.com/GitGuardian/rs-gitguardian"
+homepage = "https://www.gitguardian.com"
+
+[workspace.dependencies]
+gitguardian-api = { path = "gitguardian-api", version = "=0.1.0" }

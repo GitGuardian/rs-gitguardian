@@ -3,11 +3,13 @@ name: Main
 on:
   pull_request:
   workflow_dispatch:
+  workflow_call:
+    secrets:
+      GITGUARDIAN_API_KEY:
+        required: false
   push:
     branches:
       - main
-    tags:
-      - "v*"
 
 jobs:
   lint:
