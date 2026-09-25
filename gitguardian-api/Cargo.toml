@@ -1,7 +1,15 @@
 [package]
 name = "gitguardian-api"
-version = "0.1.0"
-edition = "2024"
+description = "Request definitions and models for the GitGuardian API"
+readme = "../README.md"
+keywords = ["gitguardian", "secrets", "security", "api"]
+categories = ["api-bindings"]
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
 
 [dependencies]
 bytes = "1"

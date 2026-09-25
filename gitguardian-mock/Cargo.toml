@@ -1,8 +1,12 @@
 [package]
 name = "gitguardian-mock"
-version = "0.1.0"
-edition = "2024"
+description = "Local mock of the GitGuardian API for E2E tests"
 publish = false
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
 
 [dependencies]
 libc = "0.2"
